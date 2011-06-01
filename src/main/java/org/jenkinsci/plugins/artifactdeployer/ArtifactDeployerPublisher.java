@@ -148,7 +148,7 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
     @SuppressWarnings("unused")
     public static final class DeleteRemoteArtifact extends RunListener<AbstractBuild> {
 
-        private Logger logger = Logger.getLogger(DeleteRemoteArtifact.class.getName());
+        private final Logger logger = Logger.getLogger(DeleteRemoteArtifact.class.getName());
 
         @Override
         public void onDeleted(AbstractBuild build) {
@@ -178,7 +178,7 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
                                         remoteArtifactPath.deleteRecursive();
                                     }
 
-                                    if (remoteArtifactPath.getParent().exists() && remoteArtifactPath.getParent().list().size()==0){
+                                    if (remoteArtifactPath.getParent().exists() && remoteArtifactPath.getParent().list().size() == 0) {
                                         remoteArtifactPath.getParent().delete();
                                     }
 

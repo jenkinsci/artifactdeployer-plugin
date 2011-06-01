@@ -1,7 +1,5 @@
 package org.jenkinsci.plugins.artifactdeployer;
 
-import org.kohsuke.stapler.DataBoundConstructor;
-
 import java.io.Serializable;
 
 /**
@@ -19,6 +17,7 @@ public class ArtifactDeployerEntry implements Serializable {
 
     private boolean flatten;
 
+    @SuppressWarnings("unused")
     private transient boolean deletingRemote;
 
     private boolean deleteRemote;
@@ -110,9 +109,11 @@ public class ArtifactDeployerEntry implements Serializable {
         this.groovyExpression = groovyExpression;
     }
 
-    public void readObject(){
-        if (deletingRemote){
-            deleteRemote=true;
+    @SuppressWarnings("unused")
+    public Object readObject() {
+        if (this.deletingRemote) {
+            this.deleteRemote = true;
         }
+        return this;
     }
 }

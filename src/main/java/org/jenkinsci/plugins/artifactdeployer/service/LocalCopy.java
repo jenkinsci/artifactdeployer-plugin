@@ -18,7 +18,7 @@ public class LocalCopy {
 
         class CopyImpl extends Copy {
 
-            private List<File> deployedFiles = new ArrayList<File>();
+            private final List<File> deployedFiles = new ArrayList<File>();
 
             private int copySize;
 

@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class ArtifactDeployerProjectAction implements Action {
 
-    private AbstractProject<?, ?> project;
+    private final AbstractProject<?, ?> project;
 
     public ArtifactDeployerProjectAction(AbstractProject<?, ?> project) {
         this.project = project;
