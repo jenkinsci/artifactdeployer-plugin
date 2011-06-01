@@ -1,0 +1,4 @@
+<div>
+  This plug-in makes it possible to deploy artifacts from workspace to output directories.
+  Only the artifacts of the latest build will be keept. 
+</div>

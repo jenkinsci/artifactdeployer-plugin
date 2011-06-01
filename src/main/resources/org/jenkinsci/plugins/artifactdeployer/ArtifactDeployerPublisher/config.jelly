@@ -1,0 +1,67 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+    <f:entry>
+
+        <f:repeatable var="e" items="${instance.entries}">
+            <table width="100%">
+
+               <input type="hidden" name="id" value="${it.id}" />
+
+               <f:entry field="includes" title="${%Files to deploy}">
+                   <f:textbox name="artifactdeployer.entry.includes" value="${e.includes}"/>
+               </f:entry>
+
+               <f:entry field="remote" title="${%Remote directory}">
+                   <f:textbox name="artifactdeployer.entry.remote" value="${e.remote}"/>
+               </f:entry>
+
+               <f:advanced>
+
+                   <f:entry field="excludes" title="${%Excludes}">
+                        <f:textbox name="artifactdeployer.entry.excludes" value="${e.excludes}"/>
+                   </f:entry>
+
+                   <f:entry field="flatten">
+                        <f:checkbox name="artifactdeployer.entry.flatten" checked="${e.flatten}"/>
+                        <label class="attach-previous">Flatten</label>
+                    </f:entry>
+
+                   <f:entry field="deleteRemote">
+                        <f:checkbox name="artifactdeployer.entry.deleteRemote" checked="${e.deleteRemote}"/>
+                        <label class="attach-previous">Clean-up remote directory before deployment</label>
+                   </f:entry>
+
+                   <f:entry field="deleteRemoteArtifacts">
+                        <f:checkbox name="artifactdeployer.entry.deleteRemoteArtifacts" checked="${e.deleteRemoteArtifacts}"/>
+                        <label class="attach-previous">Delete remote artifacts when the build is deleted</label>
+                   </f:entry>
+
+                   <f:entry>
+                         <table style="width:100%">
+                            <f:optionalBlock
+                               field="deleteRemoteArtifactsByScript"
+                               name="artifactdeployer.entry.deleteRemoteArtifactsByScript"
+                               checked="${e.deletedRemoteArtifactsByScript}"
+                               title="${%Execute a groovy script when the job is deleted}">
+
+                                   <f:entry field="groovyExpression" title="${%Groovy Expression}">
+                                        <f:textarea name="artifactdeployer.entry.groovyExpression" value="${e.groovyExpression}"/>
+                                   </f:entry>
+                           </f:optionalBlock>
+                         </table>
+                    </f:entry>
+
+               </f:advanced>
+
+                <f:entry title="">
+                    <div align="right">
+                        <f:repeatableDeleteButton/>
+                    </div>
+                </f:entry>
+
+            </table>
+        </f:repeatable>
+    </f:entry>
+
+</j:jelly>
