@@ -16,12 +16,18 @@ public class DeployedArtifacts implements Action {
 
     private static final String URL_NAME = "deployedArtifacts";
 
+    @SuppressWarnings("unused")
+    @Deprecated
+    /**
+     * Note: there is no backward compatibility for this field
+     * (can't delete deployed artifacts performed with artifactdeployer plugin previous v0.3)
+     */
     private transient List<ArtifactDeployerVO> deployedArtifacts = new LinkedList<ArtifactDeployerVO>();
 
-    private Map<String, List<ArtifactDeployerVO>> deployedArtifactsInfo = new HashMap<String, List<ArtifactDeployerVO>>();
+    private Map<Integer, List<ArtifactDeployerVO>> deployedArtifactsInfo = new HashMap<Integer, List<ArtifactDeployerVO>>();
 
-    public DeployedArtifacts(Map<String, List<ArtifactDeployerVO>> deployedArtifactsInfo) {
-        this.deployedArtifactsInfo = deployedArtifactsInfo;
+    public void addDeployedArtifacts(Map<Integer, List<ArtifactDeployerVO>> deployedArtifactsInfo) {
+        this.deployedArtifactsInfo.putAll(deployedArtifactsInfo);
     }
 
     public String getIconFileName() {
@@ -36,15 +42,15 @@ public class DeployedArtifacts implements Action {
         return URL_NAME;
     }
 
-    public Map<String, List<ArtifactDeployerVO>> getDeployedArtifactsInfo() {
-        return deployedArtifactsInfo;
+    public Map<Integer, List<ArtifactDeployerVO>> getDeployedArtifactsInfo() {
+        return this.deployedArtifactsInfo;
     }
 
     @SuppressWarnings("unused")
     public List<ArtifactDeployerVO> getAllArtifacts() {
         List<ArtifactDeployerVO> result = new ArrayList<ArtifactDeployerVO>();
-        if (deployedArtifactsInfo != null) {
-            for (List<ArtifactDeployerVO> list : deployedArtifactsInfo.values()) {
+        if (this.deployedArtifactsInfo != null) {
+            for (List<ArtifactDeployerVO> list : this.deployedArtifactsInfo.values()) {
                 result.addAll(list);
             }
         }
@@ -53,7 +59,7 @@ public class DeployedArtifacts implements Action {
 
 
     private ArtifactDeployerVO getArtifactDeployerVO(int id) {
-        for (List<ArtifactDeployerVO> entryList : deployedArtifactsInfo.values()) {
+        for (List<ArtifactDeployerVO> entryList : this.deployedArtifactsInfo.values()) {
             for (ArtifactDeployerVO entry : entryList) {
                 if (entry.getId() == id) {
                     return entry;

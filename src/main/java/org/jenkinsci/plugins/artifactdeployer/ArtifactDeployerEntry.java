@@ -7,7 +7,9 @@ import java.io.Serializable;
  */
 public class ArtifactDeployerEntry implements Serializable {
 
-    private String id;
+    @Deprecated
+    @SuppressWarnings("unused")
+    private transient String id;
 
     private String includes;
 
@@ -49,6 +51,7 @@ public class ArtifactDeployerEntry implements Serializable {
     }
 
     @SuppressWarnings("unused")
+    @Deprecated
     public String getId() {
         return id;
     }
@@ -71,10 +74,6 @@ public class ArtifactDeployerEntry implements Serializable {
     @SuppressWarnings("unused")
     public String getGroovyExpression() {
         return groovyExpression;
-    }
-
-    /*package*/ void setId(String id) {
-        this.id = id;
     }
 
     public void setIncludes(String includes) {
@@ -115,5 +114,18 @@ public class ArtifactDeployerEntry implements Serializable {
             this.deleteRemote = true;
         }
         return this;
+    }
+
+    public int getUniqueId() {
+        int result = includes != null ? includes.hashCode() : 0;
+        result = 31 * result + (excludes != null ? excludes.hashCode() : 0);
+        result = 31 * result + (remote != null ? remote.hashCode() : 0);
+        result = 31 * result + (flatten ? 1 : 0);
+        result = 31 * result + (deletingRemote ? 1 : 0);
+        result = 31 * result + (deleteRemote ? 1 : 0);
+        result = 31 * result + (deleteRemoteArtifacts ? 1 : 0);
+        result = 31 * result + (deleteRemoteArtifactsByScript ? 1 : 0);
+        result = 31 * result + (groovyExpression != null ? groovyExpression.hashCode() : 0);
+        return result;
     }
 }

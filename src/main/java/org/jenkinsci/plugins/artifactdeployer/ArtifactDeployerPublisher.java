@@ -17,6 +17,7 @@ import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
 import org.apache.tools.ant.types.FileSet;
 import org.jenkinsci.plugins.artifactdeployer.exception.ArtifactDeployerException;
+import org.jenkinsci.plugins.artifactdeployer.service.DeployedArtifactsService;
 import org.jenkinsci.plugins.artifactdeployer.service.LocalCopy;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
@@ -51,8 +52,10 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
         if (build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
 
             listener.getLogger().println("[ArtifactDeployer] - Starting deployment...");
+            DeployedArtifactsService deployedArtifactsService = DeployedArtifactsService.getInstance();
+            DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAndAttachAction(build);
             final FilePath workspace = build.getWorkspace();
-            Map<String, List<ArtifactDeployerVO>> deployedArtifacts;
+            Map<Integer, List<ArtifactDeployerVO>> deployedArtifacts;
             try {
                 deployedArtifacts = processDeployment(build, listener, workspace);
             } catch (ArtifactDeployerException ae) {
@@ -61,25 +64,26 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
                 return false;
             }
 
-            DeployedArtifacts deployedArtifactsAction = new DeployedArtifacts(deployedArtifacts);
-            build.addAction(deployedArtifactsAction);
+            deployedArtifactsAction.addDeployedArtifacts(deployedArtifacts);
             listener.getLogger().println("[ArtifactDeployer] - Stopping deployment...");
         }
         return true;
     }
 
-    private Map<String, List<ArtifactDeployerVO>> processDeployment(AbstractBuild<?, ?> build, final BuildListener listener, FilePath workspace) throws IOException, InterruptedException {
-        Map<String, List<ArtifactDeployerVO>> deployedArtifacts = new HashMap<String, List<ArtifactDeployerVO>>();
+    private Map<Integer, List<ArtifactDeployerVO>> processDeployment(AbstractBuild<?, ?> build, final BuildListener listener, FilePath workspace) throws IOException, InterruptedException {
+        Map<Integer, List<ArtifactDeployerVO>> deployedArtifacts = new HashMap<Integer, List<ArtifactDeployerVO>>();
 
         //Build and deploy artifact
-        int totalDeployedCounter = 0;
+        DeployedArtifactsService deployedArtifactsService = DeployedArtifactsService.getInstance();
+        DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAndAttachAction(build);
+        int currentTotalDeployedCounter = deployedArtifactsAction.getDeployedArtifactsInfo().size();
         for (final ArtifactDeployerEntry entry : entries) {
 
             final String includes = build.getEnvironment(listener).expand(entry.getIncludes());
             final String excludes = build.getEnvironment(listener).expand(entry.getExcludes());
             final String outputPath = build.getEnvironment(listener).expand(entry.getRemote());
             final boolean flatten = entry.isFlatten();
-            final int forCounter = totalDeployedCounter;
+            final int forCounter = currentTotalDeployedCounter;
 
             //Creating the remote directory
             final FilePath outputFilePath = new FilePath(workspace.getChannel(), outputPath);
@@ -118,8 +122,8 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
                     List<ArtifactDeployerVO> deployedArtifactsResultList = new LinkedList<ArtifactDeployerVO>();
                     for (File renoteFile : outputFilesList) {
                         ArtifactDeployerVO deploymentResultEntry = new ArtifactDeployerVO();
-                        deploymentResultEntry.setId(localJobDeployedFileCounter);
                         localJobDeployedFileCounter++;
+                        deploymentResultEntry.setId(localJobDeployedFileCounter);
                         deploymentResultEntry.setDeployed(true);
                         deploymentResultEntry.setFileName(renoteFile.getName());
                         deploymentResultEntry.setRemotePath(renoteFile.getPath());
@@ -129,8 +133,8 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
                     return deployedArtifactsResultList;
                 }
             });
-            totalDeployedCounter += results.size();
-            deployedArtifacts.put(entry.getId(), results);
+            currentTotalDeployedCounter += results.size();
+            deployedArtifacts.put(entry.getUniqueId(), results);
         }
         return deployedArtifacts;
     }
@@ -150,6 +154,7 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
 
         private final Logger logger = Logger.getLogger(DeleteRemoteArtifact.class.getName());
 
+
         @Override
         public void onDeleted(AbstractBuild build) {
 
@@ -165,12 +170,12 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
 
             if (instance != null) {
                 DeployedArtifacts deployedArtifacts = build.getAction(DeployedArtifacts.class);
-                Map<String, List<ArtifactDeployerVO>> info = deployedArtifacts.getDeployedArtifactsInfo();
+                Map<Integer, List<ArtifactDeployerVO>> info = deployedArtifacts.getDeployedArtifactsInfo();
                 if (info != null) {
                     for (ArtifactDeployerEntry entry : instance.getEntries()) {
                         //Delete output
                         if (entry.isDeleteRemoteArtifacts()) {
-                            List<ArtifactDeployerVO> listArtifacts = info.get(entry.getId());
+                            List<ArtifactDeployerVO> listArtifacts = info.get(entry.getUniqueId());
                             for (ArtifactDeployerVO vo : listArtifacts) {
                                 FilePath remoteArtifactPath = new FilePath(build.getWorkspace().getChannel(), vo.getRemotePath());
                                 try {
@@ -196,7 +201,7 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
                             //Inject list artifacts as variable
                             Binding binding = new Binding();
                             if (deployedArtifacts != null) {
-                                List<ArtifactDeployerVO> listArtifacts = info.get(entry.getId());
+                                List<ArtifactDeployerVO> listArtifacts = info.get(entry.getUniqueId());
                                 binding.setVariable("ARTIFACTS", listArtifacts);
                             }
                             GroovyShell shell = new GroovyShell(binding);
@@ -217,8 +222,8 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
         public static final String DISPLAY_NAME = Messages.depployerartifact_displayName();
 
         @Override
-        public boolean isApplicable(Class<? extends AbstractProject> aClass) {
-            return true;
+        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+            return FreeStyleProject.class.isAssignableFrom(jobType);
         }
 
         @Override
@@ -231,12 +236,10 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
             ArtifactDeployerPublisher pub = new ArtifactDeployerPublisher();
             List<ArtifactDeployerEntry> artifactDeployerEntries = new ArrayList<ArtifactDeployerEntry>();
             Iterator it = formData.entrySet().iterator();
-            int counter = 0;
             while (it.hasNext()) {
                 Map.Entry<String, JSONObject> map = (Map.Entry<String, JSONObject>) it.next();
                 JSONObject element = map.getValue();
                 ArtifactDeployerEntry entry = new ArtifactDeployerEntry();
-                ++counter;
                 entry.setExcludes(Util.fixEmpty(element.getString("excludes")));
                 entry.setIncludes(Util.fixEmpty(element.getString("includes")));
                 entry.setRemote(Util.fixEmpty(element.getString("remote")));
@@ -250,7 +253,6 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
                     entry.setDeleteRemoteArtifactsByScript(true);
                     entry.setGroovyExpression(Util.fixEmpty(element.getJSONObject("deletedRemoteArtifacts").getString("groovyExpression")));
                 }
-                entry.setId(String.valueOf(counter));
                 artifactDeployerEntries.add(entry);
             }
             pub.setEntries(artifactDeployerEntries);

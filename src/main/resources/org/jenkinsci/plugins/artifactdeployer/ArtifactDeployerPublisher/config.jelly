@@ -6,8 +6,6 @@
         <f:repeatable var="e" items="${instance.entries}">
             <table width="100%">
 
-               <input type="hidden" name="id" value="${it.id}" />
-
                <f:entry field="includes" title="${%Files to deploy}">
                    <f:textbox name="artifactdeployer.entry.includes" value="${e.includes}"/>
                </f:entry>
