@@ -14,6 +14,7 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.DescribableList;
 import hudson.util.FormValidation;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.tools.ant.types.FileSet;
 import org.jenkinsci.plugins.artifactdeployer.exception.ArtifactDeployerException;
@@ -170,7 +171,7 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
 
             if (instance != null) {
                 DeployedArtifacts deployedArtifacts = build.getAction(DeployedArtifacts.class);
-                if(deployedArtifacts != null) {
+                if (deployedArtifacts != null) {
                     Map<Integer, List<ArtifactDeployerVO>> info = deployedArtifacts.getDeployedArtifactsInfo();
                     if (info != null) {
                         for (ArtifactDeployerEntry entry : instance.getEntries()) {
@@ -233,29 +234,40 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
             return DISPLAY_NAME;
         }
 
+
+        private ArtifactDeployerEntry populateAndGetEntry(JSONObject element) {
+            ArtifactDeployerEntry entry = new ArtifactDeployerEntry();
+            entry.setExcludes(Util.fixEmpty(element.getString("excludes")));
+            entry.setIncludes(Util.fixEmpty(element.getString("includes")));
+            entry.setRemote(Util.fixEmpty(element.getString("remote")));
+            entry.setDeleteRemote(element.getBoolean("deleteRemote"));
+            entry.setFlatten(element.getBoolean("flatten"));
+            entry.setDeleteRemoteArtifacts(element.getBoolean("deleteRemoteArtifacts"));
+            Object deleteRemoteArtifactsObject = element.get("deleteRemoteArtifactsByScript");
+            if (deleteRemoteArtifactsObject == null) {
+                entry.setDeleteRemoteArtifactsByScript(false);
+            } else {
+                entry.setDeleteRemoteArtifactsByScript(true);
+                entry.setGroovyExpression(Util.fixEmpty(element.getJSONObject("deletedRemoteArtifacts").getString("groovyExpression")));
+            }
+            return entry;
+        }
+
         @Override
         public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             ArtifactDeployerPublisher pub = new ArtifactDeployerPublisher();
             List<ArtifactDeployerEntry> artifactDeployerEntries = new ArrayList<ArtifactDeployerEntry>();
-            Iterator it = formData.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, JSONObject> map = (Map.Entry<String, JSONObject>) it.next();
-                JSONObject element = map.getValue();
-                ArtifactDeployerEntry entry = new ArtifactDeployerEntry();
-                entry.setExcludes(Util.fixEmpty(element.getString("excludes")));
-                entry.setIncludes(Util.fixEmpty(element.getString("includes")));
-                entry.setRemote(Util.fixEmpty(element.getString("remote")));
-                entry.setDeleteRemote(element.getBoolean("deleteRemote"));
-                entry.setFlatten(element.getBoolean("flatten"));
-                entry.setDeleteRemoteArtifacts(element.getBoolean("deleteRemoteArtifacts"));
-                Object deleteRemoteArtifactsObject = element.get("deleteRemoteArtifactsByScript");
-                if (deleteRemoteArtifactsObject == null) {
-                    entry.setDeleteRemoteArtifactsByScript(false);
+            Object entries = formData.get("deployedArtifact");
+            if (entries != null) {
+                if (entries instanceof JSONObject) {
+                    artifactDeployerEntries.add(populateAndGetEntry((JSONObject) entries));
                 } else {
-                    entry.setDeleteRemoteArtifactsByScript(true);
-                    entry.setGroovyExpression(Util.fixEmpty(element.getJSONObject("deletedRemoteArtifacts").getString("groovyExpression")));
+                    JSONArray jsonArray = (JSONArray) entries;
+                    Iterator it = jsonArray.iterator();
+                    while (it.hasNext()) {
+                        artifactDeployerEntries.add(populateAndGetEntry((JSONObject) it.next()));
+                    }
                 }
-                artifactDeployerEntries.add(entry);
             }
             pub.setEntries(artifactDeployerEntries);
             return pub;

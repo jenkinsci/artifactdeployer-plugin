@@ -3,35 +3,35 @@
 
     <f:entry>
 
-        <f:repeatable var="e" items="${instance.entries}">
+        <f:repeatable var="deployedArtifact" items="${instance.entries}">
             <table width="100%">
 
                <f:entry field="includes" title="${%Files to deploy}">
-                   <f:textbox name="artifactdeployer.entry.includes" value="${e.includes}"/>
+                   <f:textbox name="artifactdeployer.entry.includes" value="${deployedArtifact.includes}"/>
                </f:entry>
 
                <f:entry field="remote" title="${%Remote directory}">
-                   <f:textbox name="artifactdeployer.entry.remote" value="${e.remote}"/>
+                   <f:textbox name="artifactdeployer.entry.remote" value="${deployedArtifact.remote}"/>
                </f:entry>
 
                <f:advanced>
 
                    <f:entry field="excludes" title="${%Excludes}">
-                        <f:textbox name="artifactdeployer.entry.excludes" value="${e.excludes}"/>
+                        <f:textbox name="artifactdeployer.entry.excludes" value="${deployedArtifact.excludes}"/>
                    </f:entry>
 
                    <f:entry field="flatten">
-                        <f:checkbox name="artifactdeployer.entry.flatten" checked="${e.flatten}"/>
+                        <f:checkbox name="artifactdeployer.entry.flatten" checked="${deployedArtifact.flatten}"/>
                         <label class="attach-previous">Flatten</label>
                     </f:entry>
 
                    <f:entry field="deleteRemote">
-                        <f:checkbox name="artifactdeployer.entry.deleteRemote" checked="${e.deleteRemote}"/>
+                        <f:checkbox name="artifactdeployer.entry.deleteRemote" checked="${deployedArtifact.deleteRemote}"/>
                         <label class="attach-previous">Clean-up remote directory before deployment</label>
                    </f:entry>
 
                    <f:entry field="deleteRemoteArtifacts">
-                        <f:checkbox name="artifactdeployer.entry.deleteRemoteArtifacts" checked="${e.deleteRemoteArtifacts}"/>
+                        <f:checkbox name="artifactdeployer.entry.deleteRemoteArtifacts" checked="${deployedArtifact.deleteRemoteArtifacts}"/>
                         <label class="attach-previous">Delete remote artifacts when the build is deleted</label>
                    </f:entry>
 
@@ -40,11 +40,11 @@
                             <f:optionalBlock
                                field="deleteRemoteArtifactsByScript"
                                name="artifactdeployer.entry.deleteRemoteArtifactsByScript"
-                               checked="${e.deletedRemoteArtifactsByScript}"
+                               checked="${deployedArtifact.deletedRemoteArtifactsByScript}"
                                title="${%Execute a groovy script when the job is deleted}">
 
                                    <f:entry field="groovyExpression" title="${%Groovy Expression}">
-                                        <f:textarea name="artifactdeployer.entry.groovyExpression" value="${e.groovyExpression}"/>
+                                        <f:textarea name="artifactdeployer.entry.groovyExpression" value="${deployedArtifact.groovyExpression}"/>
                                    </f:entry>
                            </f:optionalBlock>
                          </table>
