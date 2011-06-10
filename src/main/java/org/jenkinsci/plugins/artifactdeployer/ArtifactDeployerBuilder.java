@@ -158,41 +158,47 @@ public class ArtifactDeployerBuilder extends Builder {
             //Process all ArtifactDeployerBuilder instance
             for (ArtifactDeployerBuilder artifactDeployerBuilder : artifactDeployerBuilders) {
                 DeployedArtifacts deployedArtifacts = build.getAction(DeployedArtifacts.class);
-                Map<Integer, List<ArtifactDeployerVO>> info = deployedArtifacts.getDeployedArtifactsInfo();
-                if (info != null) {
-                    ArtifactDeployerEntry entry = artifactDeployerBuilder.getEntry();
-                    //Delete output
-                    if (entry.isDeleteRemoteArtifacts()) {
-                        List<ArtifactDeployerVO> listArtifacts = info.get(entry.getUniqueId());
-                        for (ArtifactDeployerVO vo : listArtifacts) {
-                            FilePath remoteArtifactPath = new FilePath(build.getWorkspace().getChannel(), vo.getRemotePath());
-                            try {
-                                if (remoteArtifactPath.exists()) {
-                                    remoteArtifactPath.deleteRecursive();
-                                }
+                if (deployedArtifacts != null) {
+                    Map<Integer, List<ArtifactDeployerVO>> info = deployedArtifacts.getDeployedArtifactsInfo();
+                    if (info != null) {
+                        ArtifactDeployerEntry entry = artifactDeployerBuilder.getEntry();
 
-                                if (remoteArtifactPath.getParent().exists() && remoteArtifactPath.getParent().list().size() == 0) {
-                                    remoteArtifactPath.getParent().delete();
-                                }
-
-                            } catch (IOException ioe) {
-                                logger.log(Level.SEVERE, "Error when deleting artifacts.", ioe);
-                            } catch (InterruptedException ie) {
-                                logger.log(Level.SEVERE, "Error when deleting artifacts.", ie);
-                            }
-                        }
-                    }
-
-                    //Execute the script for deletion
-                    if (entry.isDeleteRemoteArtifactsByScript()) {
-                        //Inject list artifacts as variable
-                        Binding binding = new Binding();
-                        if (deployedArtifacts != null) {
+                        //Delete output directly
+                        if (entry.isDeleteRemoteArtifacts()) {
                             List<ArtifactDeployerVO> listArtifacts = info.get(entry.getUniqueId());
-                            binding.setVariable("ARTIFACTS", listArtifacts);
+                            if (listArtifacts != null) {
+                                for (ArtifactDeployerVO vo : listArtifacts) {
+                                    FilePath remoteArtifactPath = new FilePath(build.getWorkspace().getChannel(), vo.getRemotePath());
+                                    try {
+                                        if (remoteArtifactPath.exists()) {
+                                            remoteArtifactPath.deleteRecursive();
+                                        }
+
+                                        if (remoteArtifactPath.getParent().exists() && remoteArtifactPath.getParent().list().size() == 0) {
+                                            remoteArtifactPath.getParent().delete();
+                                        }
+
+                                    } catch (IOException ioe) {
+                                        logger.log(Level.SEVERE, "Error when deleting artifacts.", ioe);
+                                    } catch (InterruptedException ie) {
+                                        logger.log(Level.SEVERE, "Error when deleting artifacts.", ie);
+                                    }
+                                }
+                            }
+
                         }
-                        GroovyShell shell = new GroovyShell(binding);
-                        shell.evaluate(entry.getGroovyExpression());
+
+                        //Execute the script for deletion
+                        if (entry.isDeleteRemoteArtifactsByScript()) {
+                            //Inject list artifacts as variable
+                            Binding binding = new Binding();
+                            if (deployedArtifacts != null) {
+                                List<ArtifactDeployerVO> listArtifacts = info.get(entry.getUniqueId());
+                                binding.setVariable("ARTIFACTS", listArtifacts);
+                            }
+                            GroovyShell shell = new GroovyShell(binding);
+                            shell.evaluate(entry.getGroovyExpression());
+                        }
                     }
                 }
             }
