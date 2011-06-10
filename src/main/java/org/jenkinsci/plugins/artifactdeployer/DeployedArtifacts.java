@@ -47,8 +47,24 @@ public class DeployedArtifacts implements Action {
     }
 
     @SuppressWarnings("unused")
-    public List<ArtifactDeployerVO> getAllArtifacts() {
-        List<ArtifactDeployerVO> result = new ArrayList<ArtifactDeployerVO>();
+    public Collection<ArtifactDeployerVO> getAllArtifacts() {
+
+        Comparator<ArtifactDeployerVO> comparator = new Comparator<ArtifactDeployerVO>() {
+            public int compare(ArtifactDeployerVO artifactDeployer1, ArtifactDeployerVO artifactDeployer2) {
+                if (artifactDeployer1 == null || artifactDeployer2 == null) {
+                    return 0;
+                }
+
+                String fileName1 = artifactDeployer1.getFileName();
+                String fileName2 = artifactDeployer2.getFileName();
+                if (fileName1 == null || fileName2 == null) {
+                    return 0;
+                }
+                return fileName1.compareTo(fileName2);
+            }
+        };
+
+        SortedSet<ArtifactDeployerVO> result = new TreeSet<ArtifactDeployerVO>(comparator);
         if (this.deployedArtifactsInfo != null) {
             for (List<ArtifactDeployerVO> list : this.deployedArtifactsInfo.values()) {
                 result.addAll(list);
