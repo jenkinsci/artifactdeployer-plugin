@@ -8,18 +8,18 @@ import java.io.Serializable;
 /**
  * @author Gregory Boissinot
  */
-public class DeployedArtifactsService implements Serializable {
+public class DeployedArtifactsActionManager implements Serializable {
 
-    private static DeployedArtifactsService INSTANCE = new DeployedArtifactsService();
+    private static DeployedArtifactsActionManager INSTANCE = new DeployedArtifactsActionManager();
 
-    private DeployedArtifactsService() {
+    private DeployedArtifactsActionManager() {
     }
 
-    public static DeployedArtifactsService getInstance() {
+    public static DeployedArtifactsActionManager getInstance() {
         return INSTANCE;
     }
 
-    public DeployedArtifacts getOrCreateAndAttachAction(AbstractBuild<?, ?> build) {
+    public DeployedArtifacts getOrCreateAction(AbstractBuild<?, ?> build) {
 
         DeployedArtifacts action = build.getAction(DeployedArtifacts.class);
         if (action == null) {

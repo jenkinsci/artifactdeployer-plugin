@@ -8,22 +8,20 @@ import hudson.Launcher;
 import hudson.Util;
 import hudson.model.*;
 import hudson.model.listeners.RunListener;
-import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.DescribableList;
 import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
-import org.apache.tools.ant.types.FileSet;
 import org.jenkinsci.plugins.artifactdeployer.exception.ArtifactDeployerException;
-import org.jenkinsci.plugins.artifactdeployer.service.DeployedArtifactsService;
-import org.jenkinsci.plugins.artifactdeployer.service.LocalCopy;
+import org.jenkinsci.plugins.artifactdeployer.service.ArtifactDeployerCopy;
+import org.jenkinsci.plugins.artifactdeployer.service.DeployedArtifactsActionManager;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,7 +29,7 @@ import java.util.logging.Logger;
 /**
  * @author Gregory Boissinot
  */
-public class ArtifactDeployerBuilder extends Builder {
+public class ArtifactDeployerBuilder extends Builder implements Serializable {
 
     ArtifactDeployerEntry entry;
 
@@ -39,8 +37,8 @@ public class ArtifactDeployerBuilder extends Builder {
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
 
         listener.getLogger().println("[ArtifactDeployer] - Starting deployment...");
-        DeployedArtifactsService deployedArtifactsService = DeployedArtifactsService.getInstance();
-        DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAndAttachAction(build);
+        DeployedArtifactsActionManager deployedArtifactsService = DeployedArtifactsActionManager.getInstance();
+        DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAction(build);
         final FilePath workspace = build.getWorkspace();
         Map<Integer, List<ArtifactDeployerVO>> deployedArtifacts;
         try {
@@ -84,36 +82,12 @@ public class ArtifactDeployerBuilder extends Builder {
         }
 
         //Copying files to remote directory
-        List<ArtifactDeployerVO> results = workspace.act(new FilePath.FileCallable<List<ArtifactDeployerVO>>() {
-            public List<ArtifactDeployerVO> invoke(File localWorkspace, VirtualChannel channel) throws IOException, InterruptedException {
-
-                LocalCopy localCopy = new LocalCopy();
-                FileSet fileSet = Util.createFileSet(localWorkspace, includes, excludes);
-
-                int inputFiles = fileSet.size();
-                List<File> outputFilesList = localCopy.copyAndGetNumbers(fileSet, flatten, new File(outputFilePath.getRemote()));
-                if (inputFiles != outputFilesList.size()) {
-                    listener.getLogger().println(String.format("[ArtifactDeployer] - All the files have not been deployed. There was %d input files but only %d was copied. Maybe you have to use 'Delete content of remote directory' feature for deleting remote directory before deploying.", inputFiles, outputFilesList.size()));
-                } else {
-                    listener.getLogger().println(String.format("[ArtifactDeployer] - %d file(s) have been copied from the workspace to '%s'.", outputFilesList.size(), outputPath));
-                }
-
-                DeployedArtifactsService deployedArtifactsService = DeployedArtifactsService.getInstance();
-                DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAndAttachAction(build);
-                int counter = deployedArtifactsAction.getDeployedArtifactsInfo().size();
-                List<ArtifactDeployerVO> deployedArtifactsResultList = new LinkedList<ArtifactDeployerVO>();
-                for (File renoteFile : outputFilesList) {
-                    ArtifactDeployerVO deploymentResultEntry = new ArtifactDeployerVO();
-                    deploymentResultEntry.setId(++counter);
-                    deploymentResultEntry.setDeployed(true);
-                    deploymentResultEntry.setFileName(renoteFile.getName());
-                    deploymentResultEntry.setRemotePath(renoteFile.getPath());
-                    deployedArtifactsResultList.add(deploymentResultEntry);
-                }
-                return deployedArtifactsResultList;
-            }
-        });
-
+        DeployedArtifactsActionManager deployedArtifactsService = DeployedArtifactsActionManager.getInstance();
+        DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAction(build);
+        int numberOfCurrentDeployedArtifacts = deployedArtifactsAction.getDeployedArtifactsInfo().size();
+        ArtifactDeployerCopy deployerCopy =
+                new ArtifactDeployerCopy(listener, includes, excludes, flatten, outputFilePath, numberOfCurrentDeployedArtifacts);
+        List<ArtifactDeployerVO> results = workspace.act(deployerCopy);
         deployedArtifacts.put(entry.getUniqueId(), results);
         return deployedArtifacts;
     }

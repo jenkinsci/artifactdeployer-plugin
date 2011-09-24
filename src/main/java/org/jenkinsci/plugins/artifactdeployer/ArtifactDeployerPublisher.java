@@ -18,7 +18,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.tools.ant.types.FileSet;
 import org.jenkinsci.plugins.artifactdeployer.exception.ArtifactDeployerException;
-import org.jenkinsci.plugins.artifactdeployer.service.DeployedArtifactsService;
+import org.jenkinsci.plugins.artifactdeployer.service.DeployedArtifactsActionManager;
 import org.jenkinsci.plugins.artifactdeployer.service.LocalCopy;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
@@ -53,8 +53,8 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
         if (build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
 
             listener.getLogger().println("[ArtifactDeployer] - Starting deployment...");
-            DeployedArtifactsService deployedArtifactsService = DeployedArtifactsService.getInstance();
-            DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAndAttachAction(build);
+            DeployedArtifactsActionManager deployedArtifactsService = DeployedArtifactsActionManager.getInstance();
+            DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAction(build);
             final FilePath workspace = build.getWorkspace();
             Map<Integer, List<ArtifactDeployerVO>> deployedArtifacts;
             try {
@@ -75,8 +75,8 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
         Map<Integer, List<ArtifactDeployerVO>> deployedArtifacts = new HashMap<Integer, List<ArtifactDeployerVO>>();
 
         //Build and deploy artifact
-        DeployedArtifactsService deployedArtifactsService = DeployedArtifactsService.getInstance();
-        DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAndAttachAction(build);
+        DeployedArtifactsActionManager deployedArtifactsService = DeployedArtifactsActionManager.getInstance();
+        DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAction(build);
         int currentTotalDeployedCounter = deployedArtifactsAction.getDeployedArtifactsInfo().size();
         for (final ArtifactDeployerEntry entry : entries) {
 
