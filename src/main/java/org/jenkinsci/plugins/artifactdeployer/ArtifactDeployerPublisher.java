@@ -5,9 +5,9 @@ import groovy.lang.GroovyShell;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Util;
+import hudson.maven.MavenModuleSet;
 import hudson.model.*;
 import hudson.model.listeners.RunListener;
-import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -16,15 +16,13 @@ import hudson.util.DescribableList;
 import hudson.util.FormValidation;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.tools.ant.types.FileSet;
 import org.jenkinsci.plugins.artifactdeployer.exception.ArtifactDeployerException;
+import org.jenkinsci.plugins.artifactdeployer.service.ArtifactDeployerCopy;
 import org.jenkinsci.plugins.artifactdeployer.service.DeployedArtifactsActionManager;
-import org.jenkinsci.plugins.artifactdeployer.service.LocalCopy;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
@@ -58,7 +56,8 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
             final FilePath workspace = build.getWorkspace();
             Map<Integer, List<ArtifactDeployerVO>> deployedArtifacts;
             try {
-                deployedArtifacts = processDeployment(build, listener, workspace);
+                int currentTotalDeployedCounter = deployedArtifactsAction.getDeployedArtifactsInfo().size();
+                deployedArtifacts = processDeployment(build, listener, currentTotalDeployedCounter);
             } catch (ArtifactDeployerException ae) {
                 listener.getLogger().println("[ArtifactDeployer] - Failed to deploy " + ae.getMessage());
                 build.setResult(Result.FAILURE);
@@ -71,20 +70,18 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
         return true;
     }
 
-    private Map<Integer, List<ArtifactDeployerVO>> processDeployment(AbstractBuild<?, ?> build, final BuildListener listener, FilePath workspace) throws IOException, InterruptedException {
-        Map<Integer, List<ArtifactDeployerVO>> deployedArtifacts = new HashMap<Integer, List<ArtifactDeployerVO>>();
+    private Map<Integer, List<ArtifactDeployerVO>> processDeployment(AbstractBuild<?, ?> build, final BuildListener listener, int currentNbDeployedArtifacts) throws IOException, InterruptedException {
 
-        //Build and deploy artifact
-        DeployedArtifactsActionManager deployedArtifactsService = DeployedArtifactsActionManager.getInstance();
-        DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAction(build);
-        int currentTotalDeployedCounter = deployedArtifactsAction.getDeployedArtifactsInfo().size();
+        Map<Integer, List<ArtifactDeployerVO>> deployedArtifacts = new HashMap<Integer, List<ArtifactDeployerVO>>();
+        FilePath workspace = build.getWorkspace();
+
+        int numberOfCurrentDeployedArtifacts = currentNbDeployedArtifacts;
         for (final ArtifactDeployerEntry entry : entries) {
 
             final String includes = build.getEnvironment(listener).expand(entry.getIncludes());
             final String excludes = build.getEnvironment(listener).expand(entry.getExcludes());
             final String outputPath = build.getEnvironment(listener).expand(entry.getRemote());
             final boolean flatten = entry.isFlatten();
-            final int forCounter = currentTotalDeployedCounter;
 
             //Creating the remote directory
             final FilePath outputFilePath = new FilePath(workspace.getChannel(), outputPath);
@@ -104,37 +101,11 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
                 }
             }
 
-            //Copying files to remote directory
-            List<ArtifactDeployerVO> results = workspace.act(new FilePath.FileCallable<List<ArtifactDeployerVO>>() {
-                public List<ArtifactDeployerVO> invoke(File localWorkspace, VirtualChannel channel) throws IOException, InterruptedException {
 
-                    LocalCopy localCopy = new LocalCopy();
-                    FileSet fileSet = Util.createFileSet(localWorkspace, includes, excludes);
-
-                    int inputFiles = fileSet.size();
-                    List<File> outputFilesList = localCopy.copyAndGetNumbers(fileSet, flatten, new File(outputFilePath.getRemote()));
-                    if (inputFiles != outputFilesList.size()) {
-                        listener.getLogger().println(String.format("[ArtifactDeployer] - All the files have not been deployed. There was %d input files but only %d was copied. Maybe you have to use 'Delete content of remote directory' feature for deleting remote directory before deploying.", inputFiles, outputFilesList.size()));
-                    } else {
-                        listener.getLogger().println(String.format("[ArtifactDeployer] - %d file(s) have been copied from the workspace to '%s'.", outputFilesList.size(), outputPath));
-                    }
-
-                    int localJobDeployedFileCounter = forCounter;
-                    List<ArtifactDeployerVO> deployedArtifactsResultList = new LinkedList<ArtifactDeployerVO>();
-                    for (File renoteFile : outputFilesList) {
-                        ArtifactDeployerVO deploymentResultEntry = new ArtifactDeployerVO();
-                        localJobDeployedFileCounter++;
-                        deploymentResultEntry.setId(localJobDeployedFileCounter);
-                        deploymentResultEntry.setDeployed(true);
-                        deploymentResultEntry.setFileName(renoteFile.getName());
-                        deploymentResultEntry.setRemotePath(renoteFile.getPath());
-
-                        deployedArtifactsResultList.add(deploymentResultEntry);
-                    }
-                    return deployedArtifactsResultList;
-                }
-            });
-            currentTotalDeployedCounter += results.size();
+            ArtifactDeployerCopy deployerCopy =
+                    new ArtifactDeployerCopy(listener, includes, excludes, flatten, outputFilePath, numberOfCurrentDeployedArtifacts);
+            List<ArtifactDeployerVO> results = workspace.act(deployerCopy);
+            numberOfCurrentDeployedArtifacts += results.size();
             deployedArtifacts.put(entry.getUniqueId(), results);
         }
         return deployedArtifacts;
@@ -228,7 +199,8 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
 
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-            return FreeStyleProject.class.isAssignableFrom(jobType);
+            return FreeStyleProject.class.isAssignableFrom(jobType)
+                    || MavenModuleSet.class.isAssignableFrom(jobType);
         }
 
         @Override
