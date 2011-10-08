@@ -4,8 +4,9 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import hudson.Extension;
 import hudson.FilePath;
+import hudson.Launcher;
 import hudson.Util;
-import hudson.maven.MavenModuleSet;
+import hudson.matrix.*;
 import hudson.model.*;
 import hudson.model.listeners.RunListener;
 import hudson.tasks.BuildStepDescriptor;
@@ -32,7 +33,7 @@ import java.util.logging.Logger;
 /**
  * @author Gregory Boissinot
  */
-public class ArtifactDeployerPublisher extends Recorder implements Serializable {
+public class ArtifactDeployerPublisher extends Recorder implements MatrixAggregatable, Serializable {
 
     private List<ArtifactDeployerEntry> entries = Collections.emptyList();
 
@@ -45,10 +46,29 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
         return Arrays.asList(new ArtifactDeployerProjectAction(project));
     }
 
+    public MatrixAggregator createAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
+        return new MatrixAggregator(build, launcher, listener) {
+
+            @Override
+            public boolean endRun(MatrixRun run) throws InterruptedException, IOException {
+                return _perform(run, launcher, listener);
+            }
+
+        };
+    }
+
     @Override
     public boolean perform(hudson.model.AbstractBuild<?, ?> build, hudson.Launcher launcher, hudson.model.BuildListener listener) throws java.lang.InterruptedException, java.io.IOException {
+        if (!(build.getProject() instanceof MatrixConfiguration)) {
+            return _perform(build, launcher, listener);
+        }
+        return true;
+    }
 
-        if (build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
+
+    public boolean _perform(hudson.model.AbstractBuild<?, ?> build, hudson.Launcher launcher, hudson.model.BuildListener listener) throws java.lang.InterruptedException, java.io.IOException {
+
+        if (build.getResult() == null || build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
 
             listener.getLogger().println("[ArtifactDeployer] - Starting deployment...");
             DeployedArtifactsActionManager deployedArtifactsService = DeployedArtifactsActionManager.getInstance();
@@ -130,6 +150,7 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
         @Override
         public void onDeleted(AbstractBuild build) {
 
+            @SuppressWarnings("unchecked")
             DescribableList<Publisher, Descriptor<Publisher>> projectPublishers = build.getProject().getPublishersList();
             Iterator<Publisher> it = projectPublishers.iterator();
             ArtifactDeployerPublisher instance = null;
@@ -199,8 +220,7 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
 
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-            return FreeStyleProject.class.isAssignableFrom(jobType)
-                    || MavenModuleSet.class.isAssignableFrom(jobType);
+            return true;
         }
 
         @Override
