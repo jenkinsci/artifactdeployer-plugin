@@ -79,7 +79,7 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
                 int currentTotalDeployedCounter = deployedArtifactsAction.getDeployedArtifactsInfo().size();
                 deployedArtifacts = processDeployment(build, listener, currentTotalDeployedCounter);
             } catch (ArtifactDeployerException ae) {
-                listener.getLogger().println("[ArtifactDeployer] - Failed to deploy " + ae.getMessage());
+                listener.getLogger().println("[ArtifactDeployer] - [ERROR] - Failed to deploy. " + ae.getMessage());
                 build.setResult(Result.FAILURE);
                 return false;
             }
@@ -97,6 +97,11 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
 
         int numberOfCurrentDeployedArtifacts = currentNbDeployedArtifacts;
         for (final ArtifactDeployerEntry entry : entries) {
+
+
+            if (entry.getRemote() == null) {
+                throw new ArtifactDeployerException("All remote directories must be set.");
+            }
 
             final String includes = build.getEnvironment(listener).expand(entry.getIncludes());
             final String excludes = build.getEnvironment(listener).expand(entry.getExcludes());
@@ -280,7 +285,7 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
 
         public FormValidation doCheckRemote(@QueryParameter String value) throws IOException {
             if (value == null || value.trim().length() == 0) {
-                throw FormValidation.error("Remote directory is mandatory.");
+                return FormValidation.error("Remote directory is mandatory.");
             }
             return FormValidation.ok();
         }

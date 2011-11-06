@@ -44,7 +44,7 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
         try {
             deployedArtifacts = processDeployment(build, listener, workspace);
         } catch (ArtifactDeployerException ae) {
-            listener.getLogger().println("[ArtifactDeployer] - Failed to deploy " + ae.getMessage());
+            listener.getLogger().println("[ArtifactDeployer] - [ERROR] -  Failed to deploy. " + ae.getMessage());
             build.setResult(Result.FAILURE);
             return false;
         }
@@ -56,8 +56,12 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
     }
 
     private Map<Integer, List<ArtifactDeployerVO>> processDeployment(final AbstractBuild<?, ?> build, final BuildListener listener, FilePath workspace) throws IOException, InterruptedException {
-        Map<Integer, List<ArtifactDeployerVO>> deployedArtifacts = new HashMap<Integer, List<ArtifactDeployerVO>>();
 
+        if (entry.getRemote() == null) {
+            throw new ArtifactDeployerException("A remote directory must be set.");
+        }
+
+        Map<Integer, List<ArtifactDeployerVO>> deployedArtifacts = new HashMap<Integer, List<ArtifactDeployerVO>>();
         final String includes = build.getEnvironment(listener).expand(entry.getIncludes());
         final String excludes = build.getEnvironment(listener).expand(entry.getExcludes());
         final String outputPath = build.getEnvironment(listener).expand(entry.getRemote());
