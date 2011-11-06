@@ -70,22 +70,24 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
 
         if (build.getResult() == null || build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
 
-            listener.getLogger().println("[ArtifactDeployer] - Starting deployment...");
+            listener.getLogger().println("[ArtifactDeployer] - Starting deployment from the post-action ...");
             DeployedArtifactsActionManager deployedArtifactsService = DeployedArtifactsActionManager.getInstance();
             DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAction(build);
-            final FilePath workspace = build.getWorkspace();
             Map<Integer, List<ArtifactDeployerVO>> deployedArtifacts;
             try {
                 int currentTotalDeployedCounter = deployedArtifactsAction.getDeployedArtifactsInfo().size();
                 deployedArtifacts = processDeployment(build, listener, currentTotalDeployedCounter);
             } catch (ArtifactDeployerException ae) {
                 listener.getLogger().println("[ArtifactDeployer] - [ERROR] - Failed to deploy. " + ae.getMessage());
+                if (ae.getCause() != null) {
+                    listener.getLogger().println("[ArtifactDeployer] - [ERROR] - " + ae.getCause().getMessage());
+                }
                 build.setResult(Result.FAILURE);
                 return false;
             }
 
             deployedArtifactsAction.addDeployedArtifacts(deployedArtifacts);
-            listener.getLogger().println("[ArtifactDeployer] - Stopping deployment...");
+            listener.getLogger().println("[ArtifactDeployer] - Stopping deployment from the post-action...");
         }
         return true;
     }
@@ -97,7 +99,6 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
 
         int numberOfCurrentDeployedArtifacts = currentNbDeployedArtifacts;
         for (final ArtifactDeployerEntry entry : entries) {
-
 
             if (entry.getRemote() == null) {
                 throw new ArtifactDeployerException("All remote directories must be set.");

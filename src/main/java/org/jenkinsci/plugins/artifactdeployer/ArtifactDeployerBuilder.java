@@ -36,7 +36,7 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
 
-        listener.getLogger().println("[ArtifactDeployer] - Starting deployment...");
+        listener.getLogger().println("[ArtifactDeployer] - Starting deployment from the build step ...");
         DeployedArtifactsActionManager deployedArtifactsService = DeployedArtifactsActionManager.getInstance();
         DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAction(build);
         final FilePath workspace = build.getWorkspace();
@@ -45,12 +45,15 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
             deployedArtifacts = processDeployment(build, listener, workspace);
         } catch (ArtifactDeployerException ae) {
             listener.getLogger().println("[ArtifactDeployer] - [ERROR] -  Failed to deploy. " + ae.getMessage());
+            if (ae.getCause() != null) {
+                listener.getLogger().println("[ArtifactDeployer] - [ERROR] - " + ae.getCause().getMessage());
+            }
             build.setResult(Result.FAILURE);
             return false;
         }
 
         deployedArtifactsAction.addDeployedArtifacts(deployedArtifacts);
-        listener.getLogger().println("[ArtifactDeployer] - Stopping deployment...");
+        listener.getLogger().println("[ArtifactDeployer] - Stopping deployment from the build step ...");
 
         return true;
     }

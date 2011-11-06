@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.artifactdeployer.service;
 
+import com.atlassian.ant.tasks.CopyWithPerms;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.types.FileSet;
 import org.jenkinsci.plugins.artifactdeployer.exception.ArtifactDeployerException;
 
@@ -16,7 +16,7 @@ public class LocalCopy {
 
     public List<File> copyAndGetNumbers(FileSet fileSet, boolean flatten, File target) throws ArtifactDeployerException {
 
-        class CopyImpl extends Copy {
+        class CopyImpl extends CopyWithPerms {
 
             private final List<File> deployedFiles = new ArrayList<File>();
 
@@ -36,7 +36,6 @@ public class LocalCopy {
                     }
                 }
                 super.doFileOperations();
-
             }
 
             public int getNumCopied() {
@@ -55,11 +54,12 @@ public class LocalCopy {
         copyTask.setOverwrite(false);
         copyTask.setIncludeEmptyDirs(true);
         copyTask.setFlatten(flatten);
+        copyTask.setPreservePermissions(true);
 
         try {
             copyTask.execute();
         } catch (BuildException be) {
-            throw new ArtifactDeployerException("Error on copying file", be);
+            throw new ArtifactDeployerException("Error on copying file.", be);
         }
         return copyTask.getDeployedFiles();
     }

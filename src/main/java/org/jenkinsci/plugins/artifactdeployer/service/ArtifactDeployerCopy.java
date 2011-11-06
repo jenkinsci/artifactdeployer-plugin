@@ -39,17 +39,18 @@ public class ArtifactDeployerCopy implements FilePath.FileCallable<List<Artifact
     }
 
     public List<ArtifactDeployerVO> invoke(File localWorkspace, VirtualChannel channel) throws IOException, InterruptedException {
-        LocalCopy localCopy = new LocalCopy();
-        FileSet fileSet = Util.createFileSet(localWorkspace, includes, excludes);
 
+        String remote = outputFilePath.getRemote();
+        FileSet fileSet = Util.createFileSet(localWorkspace, includes, excludes);
         int inputFiles = fileSet.size();
-        List<File> outputFilesList = localCopy.copyAndGetNumbers(fileSet, flatten, new File(outputFilePath.getRemote()));
+
+        LocalCopy localCopy = new LocalCopy();
+        List<File> outputFilesList = localCopy.copyAndGetNumbers(fileSet, flatten, new File(remote));
         if (inputFiles != outputFilesList.size()) {
             listener.getLogger().println(String.format("[ArtifactDeployer] - All the files have not been deployed. There was %d input files but only %d was copied. Maybe you have to use 'Delete content of remote directory' feature for deleting remote directory before deploying.", inputFiles, outputFilesList.size()));
         } else {
             listener.getLogger().println(String.format("[ArtifactDeployer] - %d file(s) have been copied from the workspace to '%s'.", outputFilesList.size(), outputFilePath));
         }
-
 
         List<ArtifactDeployerVO> deployedArtifactsResultList = new LinkedList<ArtifactDeployerVO>();
         for (File renoteFile : outputFilesList) {
