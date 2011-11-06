@@ -10,7 +10,7 @@
     <artifactId>artifactdeployer</artifactId>
     <packaging>hpi</packaging>
     <name>Jenkins Artifact Deployer Plug-in</name>
-    <version>0.11</version>
+    <version>0.12-SNAPSHOT</version>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/ArtifactDeployer+Plugin</url>
 
     <licenses>
