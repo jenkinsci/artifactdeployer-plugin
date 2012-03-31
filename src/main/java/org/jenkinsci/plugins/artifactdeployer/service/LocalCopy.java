@@ -54,6 +54,7 @@ public class LocalCopy {
         copyTask.setOverwrite(false);
         copyTask.setIncludeEmptyDirs(true);
         copyTask.setFlatten(flatten);
+        copyTask.setPreserveLastModified(true);
         copyTask.setPreservePermissions(true);
 
         try {
