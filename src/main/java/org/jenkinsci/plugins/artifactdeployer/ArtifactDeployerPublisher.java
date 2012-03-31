@@ -35,6 +35,7 @@ import java.util.logging.Logger;
  */
 public class ArtifactDeployerPublisher extends Recorder implements MatrixAggregatable, Serializable {
 
+    private boolean deployEvenBuildFail;
     private List<ArtifactDeployerEntry> entries = Collections.emptyList();
 
     public BuildStepMonitor getRequiredMonitorService() {
@@ -66,9 +67,22 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
     }
 
 
+    private boolean isPerformDeployment(AbstractBuild build) {
+        Result result = build.getResult();
+        if (result == null) {
+            return true;
+        }
+
+        if (deployEvenBuildFail) {
+            return true;
+        }
+
+        return build.getResult().isBetterOrEqualTo(Result.UNSTABLE);
+    }
+
     public boolean _perform(hudson.model.AbstractBuild<?, ?> build, hudson.Launcher launcher, hudson.model.BuildListener listener) throws java.lang.InterruptedException, java.io.IOException {
 
-        if (build.getResult() == null || build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
+        if (isPerformDeployment(build)) {
 
             listener.getLogger().println("[ArtifactDeployer] - Starting deployment from the post-action ...");
             DeployedArtifactsActionManager deployedArtifactsService = DeployedArtifactsActionManager.getInstance();
@@ -144,6 +158,14 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
 
     public void setEntries(List<ArtifactDeployerEntry> entries) {
         this.entries = entries;
+    }
+
+    public boolean isDeployEvenBuildFail() {
+        return deployEvenBuildFail;
+    }
+
+    public void setDeployEvenBuildFail(boolean deployEvenBuildFail) {
+        this.deployEvenBuildFail = deployEvenBuildFail;
     }
 
     @Extension
@@ -270,6 +292,7 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
                 }
             }
             pub.setEntries(artifactDeployerEntries);
+            pub.setDeployEvenBuildFail(formData.getBoolean("deployEvenBuildFail"));
             return pub;
         }
 
