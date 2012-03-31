@@ -57,11 +57,11 @@
         </dependency>
 
         <dependency>
-            <groupId>com.atlassian.ant.tasks</groupId>
-            <artifactId>ant-filesystem-tasks</artifactId>
-            <version>0.0.2</version>
+            <groupId>ant</groupId>
+            <artifactId>ant-junit</artifactId>
+            <version>1.6.5</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/ant-filesystem-tasks-0.0.2.jar</systemPath>
+            <systemPath>/Users/gregory/trunk/hudson/git/lib/ant-filesystem-tasks-0.0.2.jar</systemPath>
         </dependency>
 
     </dependencies>
