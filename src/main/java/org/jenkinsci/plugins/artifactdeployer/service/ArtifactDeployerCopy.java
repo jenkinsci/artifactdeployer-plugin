@@ -57,7 +57,7 @@ public class ArtifactDeployerCopy implements FilePath.FileCallable<List<Artifact
             ArtifactDeployerVO deploymentResultEntry = new ArtifactDeployerVO();
             deploymentResultEntry.setId(++numberOfCurrentDeployedArtifacts);
             deploymentResultEntry.setDeployed(true);
-            deploymentResultEntry.setFileName(renoteFile.getName());
+            deploymentResultEntry.setFileName(renoteFile.getCanonicalPath());
             deploymentResultEntry.setRemotePath(renoteFile.getPath());
             deployedArtifactsResultList.add(deploymentResultEntry);
         }
