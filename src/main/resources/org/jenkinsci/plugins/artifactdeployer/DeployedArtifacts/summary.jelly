@@ -1,18 +1,14 @@
 <j:jelly xmlns:j="jelly:core"
-        xmlns:d="jelly:define"
-        xmlns:l="/lib/layout"
-        xmlns:t="/lib/hudson"
-        xmlns:f="/lib/form"
-        xmlns:i="jelly:fmt">
+         xmlns:t="/lib/hudson">
     <t:summary icon="package.gif">
-            ${%Deployed Artifacts}
-            <ul>
-                <j:forEach var="artifact" items="${it.allArtifacts}" >
-                    <li>
-                        <a href="deployedArtifacts/download/artifact.${artifact.id}/">${h.escape(artifact.fileName)}</a>
-                        <br />
-                    </li>
-                </j:forEach>
-            </ul>
+        ${%Deployed Artifacts}
+        <ul>
+            <j:forEach var="artifact" items="${it.allArtifacts}">
+                <li>
+                    <a href="deployedArtifacts/download/artifact.${artifact.id}/">${h.escape(artifact.fileName)}</a>
+                    <br/>
+                </li>
+            </j:forEach>
+        </ul>
     </t:summary>
 </j:jelly>
