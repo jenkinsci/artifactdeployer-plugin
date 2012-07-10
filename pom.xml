@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.409</version>
+        <version>1.424</version>
     </parent>
 
     <artifactId>artifactdeployer</artifactId>
@@ -36,6 +37,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
+        <root.local.repo>${basedir}</root.local.repo>
     </properties>
 
     <scm>
@@ -61,7 +63,9 @@
             <artifactId>ant-junit</artifactId>
             <version>1.6.5</version>
             <scope>system</scope>
-            <systemPath>/Users/gregory/trunk/hudson/git/lib/ant-filesystem-tasks-0.0.2.jar</systemPath>
+            <systemPath>
+                ${root.local.repo}/localRepository/localant/ant-filesystem-tasks/0.0.2/ant-filesystem-tasks-0.0.2.jar
+            </systemPath>
         </dependency>
 
     </dependencies>
@@ -82,7 +86,7 @@
                         <configuration>
                             <target>
                                 <copy todir="${project.build.directory}/${project.artifactId}/WEB-INF/lib">
-                                    <fileset dir="lib" />
+                                    <fileset dir="lib"/>
                                 </copy>
                             </target>
                         </configuration>
