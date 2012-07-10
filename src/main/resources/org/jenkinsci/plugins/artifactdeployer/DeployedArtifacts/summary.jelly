@@ -5,7 +5,7 @@
         <ul>
             <j:forEach var="artifact" items="${it.allArtifacts}">
                 <li>
-                    <a href="deployedArtifacts/download/artifact.${artifact.id}/">${h.escape(artifact.fileName)}</a>
+                    <a href="deployedArtifacts/download/artifact.${artifact.id}/">${h.escape(artifact.remotePath)}</a>
                     <br/>
                 </li>
             </j:forEach>

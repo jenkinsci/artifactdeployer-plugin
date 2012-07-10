@@ -9,7 +9,7 @@
                <j:set var="lastSuccessfulNumber" value="${it.lastSuccessfulNumber}"/>
                <j:forEach var="artifact" items="${latestDeployedArtifacts.allArtifacts}" >
                    <li>
-                       <a href="${lastSuccessfulNumber}/deployedArtifacts/download/artifact.${artifact.id}/">${h.escape(artifact.fileName)}</a>
+                       <a href="${lastSuccessfulNumber}/deployedArtifacts/download/artifact.${artifact.id}/">${h.escape(artifact.remotePath)}</a>
                        <br />
                    </li>
                </j:forEach>
