@@ -181,20 +181,24 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
             @SuppressWarnings("unchecked")
             DescribableList<Publisher, Descriptor<Publisher>> projectPublishers = build.getProject().getPublishersList();
             Iterator<Publisher> it = projectPublishers.iterator();
-            ArtifactDeployerPublisher instance = null;
+            ArtifactDeployerPublisher artifactDeployerPublisher = null;
             while (it.hasNext()) {
                 Publisher publisher = it.next();
-                if (ArtifactDeployerDescriptor.DISPLAY_NAME.equals(publisher.getDescriptor().getDisplayName())) {
-                    instance = (ArtifactDeployerPublisher) publisher;
+                Descriptor<Publisher> publisherDescriptor = publisher.getDescriptor();
+                if (publisherDescriptor == null) {
+                    continue;
+                }
+                if (ArtifactDeployerDescriptor.DISPLAY_NAME.equals(publisherDescriptor.getDisplayName())) {
+                    artifactDeployerPublisher = (ArtifactDeployerPublisher) publisher;
                 }
             }
 
-            if (instance != null) {
+            if (artifactDeployerPublisher != null) {
                 DeployedArtifacts deployedArtifacts = build.getAction(DeployedArtifacts.class);
                 if (deployedArtifacts != null) {
                     Map<Integer, List<ArtifactDeployerVO>> info = deployedArtifacts.getDeployedArtifactsInfo();
                     if (info != null) {
-                        for (ArtifactDeployerEntry entry : instance.getEntries()) {
+                        for (ArtifactDeployerEntry entry : artifactDeployerPublisher.getEntries()) {
                             //Delete output
                             if (entry.isDeleteRemoteArtifacts()) {
                                 List<ArtifactDeployerVO> listArtifacts = info.get(entry.getUniqueId());
