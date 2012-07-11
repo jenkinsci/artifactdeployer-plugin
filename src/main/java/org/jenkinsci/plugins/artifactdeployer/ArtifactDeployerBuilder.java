@@ -15,6 +15,7 @@ import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.artifactdeployer.exception.ArtifactDeployerException;
 import org.jenkinsci.plugins.artifactdeployer.service.ArtifactDeployerCopy;
+import org.jenkinsci.plugins.artifactdeployer.service.ArtifactDeployerManager;
 import org.jenkinsci.plugins.artifactdeployer.service.DeployedArtifactsActionManager;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
@@ -67,6 +68,7 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
         Map<Integer, List<ArtifactDeployerVO>> deployedArtifacts = new HashMap<Integer, List<ArtifactDeployerVO>>();
         final String includes = build.getEnvironment(listener).expand(entry.getIncludes());
         final String excludes = build.getEnvironment(listener).expand(entry.getExcludes());
+        final String basedir = build.getEnvironment(listener).expand(entry.getBasedir());
         final String outputPath = build.getEnvironment(listener).expand(entry.getRemote());
         final boolean flatten = entry.isFlatten();
 
@@ -94,7 +96,9 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
         int numberOfCurrentDeployedArtifacts = deployedArtifactsAction.getDeployedArtifactsInfo().size();
         ArtifactDeployerCopy deployerCopy =
                 new ArtifactDeployerCopy(listener, includes, excludes, flatten, outputFilePath, numberOfCurrentDeployedArtifacts);
-        List<ArtifactDeployerVO> results = workspace.act(deployerCopy);
+        ArtifactDeployerManager deployerManager = new ArtifactDeployerManager();
+        FilePath basedirFilePath = deployerManager.getBasedirFilePath(workspace, basedir);
+        List<ArtifactDeployerVO> results = basedirFilePath.act(deployerCopy);
         deployedArtifacts.put(entry.getUniqueId(), results);
         return deployedArtifacts;
     }
@@ -207,8 +211,9 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
         public Builder newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             ArtifactDeployerBuilder builder = new ArtifactDeployerBuilder();
             ArtifactDeployerEntry entry = new ArtifactDeployerEntry();
-            entry.setExcludes(Util.fixEmpty(formData.getString("excludes")));
             entry.setIncludes(Util.fixEmpty(formData.getString("includes")));
+            entry.setBasedir(Util.fixEmpty(formData.getString("basedir")));
+            entry.setExcludes(Util.fixEmpty(formData.getString("excludes")));
             entry.setRemote(Util.fixEmpty(formData.getString("remote")));
             entry.setDeleteRemote(formData.getBoolean("deleteRemote"));
             entry.setFlatten(formData.getBoolean("flatten"));

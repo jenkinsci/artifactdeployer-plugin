@@ -4,6 +4,12 @@
         <f:textbox name="artifactdeployer.entry.includes" value="${instance.entry.includes}"/>
     </f:entry>
 
+    <f:advanced>
+        <f:entry field="basedir" title="${%Basedir}">
+            <f:textbox name="artifactdeployer.entry.basedir" value="${instance.entry.basedir}"/>
+        </f:entry>
+    </f:advanced>
+
     <f:entry field="remote" title="${%Remote directory}">
         <f:textbox name="artifactdeployer.entry.remote" value="${instance.entry.remote}"/>
     </f:entry>
@@ -47,6 +53,5 @@
         </f:entry>
 
     </f:advanced>
-
 
 </j:jelly>

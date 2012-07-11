@@ -10,29 +10,28 @@ public class ArtifactDeployerEntry implements Serializable {
     @Deprecated
     @SuppressWarnings("unused")
     private transient String id;
-
-    private String includes;
-
-    private String excludes;
-
-    private String remote;
-
-    private boolean flatten;
-
+    @Deprecated
     @SuppressWarnings("unused")
     private transient boolean deletingRemote;
 
+    private String includes;
+    private String basedir;
+    private String excludes;
+    private String remote;
+    private boolean flatten;
     private boolean deleteRemote;
-
     private boolean deleteRemoteArtifacts;
-
     private boolean deleteRemoteArtifactsByScript;
-
     private String groovyExpression;
 
     @SuppressWarnings("unused")
     public String getIncludes() {
         return includes;
+    }
+
+    @SuppressWarnings("unused")
+    public String getBasedir() {
+        return basedir;
     }
 
     @SuppressWarnings("unused")
@@ -50,7 +49,7 @@ public class ArtifactDeployerEntry implements Serializable {
         return flatten;
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "deprecation"})
     @Deprecated
     public String getId() {
         return id;
@@ -78,6 +77,10 @@ public class ArtifactDeployerEntry implements Serializable {
 
     public void setIncludes(String includes) {
         this.includes = includes;
+    }
+
+    public void setBasedir(String basedir) {
+        this.basedir = basedir;
     }
 
     public void setExcludes(String excludes) {
@@ -108,7 +111,7 @@ public class ArtifactDeployerEntry implements Serializable {
         this.groovyExpression = groovyExpression;
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "deprecation"})
     public Object readObject() {
         if (this.deletingRemote) {
             this.deleteRemote = true;
@@ -120,6 +123,7 @@ public class ArtifactDeployerEntry implements Serializable {
         int result = includes != null ? includes.hashCode() : 0;
         result = 31 * result + (excludes != null ? excludes.hashCode() : 0);
         result = 31 * result + (remote != null ? remote.hashCode() : 0);
+        result = 31 * result + (basedir != null ? basedir.hashCode() : 0);
         result = 31 * result + (flatten ? 1 : 0);
         result = 31 * result + (deletingRemote ? 1 : 0);
         result = 31 * result + (deleteRemote ? 1 : 0);

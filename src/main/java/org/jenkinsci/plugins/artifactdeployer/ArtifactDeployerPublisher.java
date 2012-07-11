@@ -19,6 +19,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.artifactdeployer.exception.ArtifactDeployerException;
 import org.jenkinsci.plugins.artifactdeployer.service.ArtifactDeployerCopy;
+import org.jenkinsci.plugins.artifactdeployer.service.ArtifactDeployerManager;
 import org.jenkinsci.plugins.artifactdeployer.service.DeployedArtifactsActionManager;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
@@ -80,7 +81,7 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
         return build.getResult().isBetterOrEqualTo(Result.UNSTABLE);
     }
 
-    public boolean _perform(hudson.model.AbstractBuild<?, ?> build, hudson.Launcher launcher, hudson.model.BuildListener listener) throws java.lang.InterruptedException, java.io.IOException {
+    private boolean _perform(hudson.model.AbstractBuild<?, ?> build, hudson.Launcher launcher, hudson.model.BuildListener listener) throws java.lang.InterruptedException, java.io.IOException {
 
         if (isPerformDeployment(build)) {
 
@@ -120,6 +121,7 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
 
             final String includes = build.getEnvironment(listener).expand(entry.getIncludes());
             final String excludes = build.getEnvironment(listener).expand(entry.getExcludes());
+            final String basedir = build.getEnvironment(listener).expand(entry.getBasedir());
             final String outputPath = build.getEnvironment(listener).expand(entry.getRemote());
             final boolean flatten = entry.isFlatten();
 
@@ -144,7 +146,9 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
 
             ArtifactDeployerCopy deployerCopy =
                     new ArtifactDeployerCopy(listener, includes, excludes, flatten, outputFilePath, numberOfCurrentDeployedArtifacts);
-            List<ArtifactDeployerVO> results = workspace.act(deployerCopy);
+            ArtifactDeployerManager deployerManager = new ArtifactDeployerManager();
+            FilePath basedirFilPath = deployerManager.getBasedirFilePath(workspace, basedir);
+            List<ArtifactDeployerVO> results = basedirFilPath.act(deployerCopy);
             numberOfCurrentDeployedArtifacts += results.size();
             deployedArtifacts.put(entry.getUniqueId(), results);
         }
@@ -263,8 +267,9 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
 
         private ArtifactDeployerEntry populateAndGetEntry(JSONObject element) {
             ArtifactDeployerEntry entry = new ArtifactDeployerEntry();
-            entry.setExcludes(Util.fixEmpty(element.getString("excludes")));
             entry.setIncludes(Util.fixEmpty(element.getString("includes")));
+            entry.setBasedir(Util.fixEmpty(element.getString("basedir")));
+            entry.setExcludes(Util.fixEmpty(element.getString("excludes")));
             entry.setRemote(Util.fixEmpty(element.getString("remote")));
             entry.setDeleteRemote(element.getBoolean("deleteRemote"));
             entry.setFlatten(element.getBoolean("flatten"));

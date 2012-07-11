@@ -55,12 +55,12 @@ public class DeployedArtifacts implements Action {
                     return 0;
                 }
 
-                String fileName1 = artifactDeployer1.getFileName();
-                String fileName2 = artifactDeployer2.getFileName();
-                if (fileName1 == null || fileName2 == null) {
+                String remotePath1 = artifactDeployer1.getRemotePath();
+                String remotePath2 = artifactDeployer2.getRemotePath();
+                if (remotePath1 == null || remotePath2 == null) {
                     return 0;
                 }
-                return fileName1.compareTo(fileName2);
+                return remotePath1.compareTo(remotePath2);
             }
         };
 

@@ -10,6 +10,12 @@
                     <f:textbox name="artifactdeployer.entry.includes" value="${deployedArtifact.includes}"/>
                 </f:entry>
 
+                <f:advanced>
+                    <f:entry field="basedir" title="${%Basedir}">
+                        <f:textbox name="artifactdeployer.entry.basedir" value="${deployedArtifact.basedir}"/>
+                    </f:entry>
+                </f:advanced>
+
                 <f:entry field="remote" title="${%Remote directory}">
                     <f:textbox name="artifactdeployer.entry.remote" value="${deployedArtifact.remote}"/>
                 </f:entry>

@@ -38,10 +38,10 @@ public class ArtifactDeployerCopy implements FilePath.FileCallable<List<Artifact
         this.numberOfCurrentDeployedArtifacts = numberOfCurrentDeployedArtifacts;
     }
 
-    public List<ArtifactDeployerVO> invoke(File localWorkspace, VirtualChannel channel) throws IOException, InterruptedException {
+    public List<ArtifactDeployerVO> invoke(File localBasedir, VirtualChannel channel) throws IOException, InterruptedException {
 
         String remote = outputFilePath.getRemote();
-        FileSet fileSet = Util.createFileSet(localWorkspace, includes, excludes);
+        FileSet fileSet = Util.createFileSet(localBasedir, includes, excludes);
         int inputFiles = fileSet.size();
 
         LocalCopy localCopy = new LocalCopy();
@@ -49,7 +49,7 @@ public class ArtifactDeployerCopy implements FilePath.FileCallable<List<Artifact
         if (inputFiles != outputFilesList.size()) {
             listener.getLogger().println(String.format("[ArtifactDeployer] - All the files have not been deployed. There was %d input files but only %d was copied. Maybe you have to use 'Delete content of remote directory' feature for deleting remote directory before deploying.", inputFiles, outputFilesList.size()));
         } else {
-            listener.getLogger().println(String.format("[ArtifactDeployer] - %d file(s) have been copied from the workspace to '%s'.", outputFilesList.size(), outputFilePath));
+            listener.getLogger().println(String.format("[ArtifactDeployer] - %d file(s) have been copied from the '%s' to '%s'.", outputFilesList.size(), localBasedir.getPath(), outputFilePath));
         }
 
         List<ArtifactDeployerVO> deployedArtifactsResultList = new LinkedList<ArtifactDeployerVO>();
