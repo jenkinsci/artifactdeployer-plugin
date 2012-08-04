@@ -223,7 +223,7 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
                 entry.setDeleteRemoteArtifactsByScript(false);
             } else {
                 entry.setDeleteRemoteArtifactsByScript(true);
-                entry.setGroovyExpression(Util.fixEmpty(formData.getJSONObject("deletedRemoteArtifacts").getString("groovyExpression")));
+                entry.setGroovyExpression(Util.fixEmpty(formData.getJSONObject("deleteRemoteArtifactsByScript").getString("groovyExpression")));
             }
             builder.setEntry(entry);
             return builder;

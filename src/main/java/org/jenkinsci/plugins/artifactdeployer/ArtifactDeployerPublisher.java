@@ -279,7 +279,7 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
                 entry.setDeleteRemoteArtifactsByScript(false);
             } else {
                 entry.setDeleteRemoteArtifactsByScript(true);
-                entry.setGroovyExpression(Util.fixEmpty(element.getJSONObject("deletedRemoteArtifacts").getString("groovyExpression")));
+                entry.setGroovyExpression(Util.fixEmpty(element.getJSONObject("deleteRemoteArtifactsByScript").getString("groovyExpression")));
             }
             return entry;
         }
