@@ -214,9 +214,15 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
                                                 remoteArtifactPath.deleteRecursive();
                                             }
 
-                                            if (remoteArtifactPath.getParent().exists() && remoteArtifactPath.getParent().list().size() == 0) {
-                                                remoteArtifactPath.getParent().delete();
-                                            }
+                                            FilePath parent = remoteArtifactPath.getParent();
+                                            boolean rest;
+                                            do {
+                                                rest = parent.exists() && parent.list().size() == 0;
+                                                if (rest) {
+                                                    parent.delete();
+                                                }
+                                                parent = parent.getParent();
+                                            } while (rest);
 
                                         } catch (IOException ioe) {
                                             logger.log(Level.SEVERE, "Error when deleting artifacts.", ioe);
