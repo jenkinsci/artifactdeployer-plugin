@@ -1,14 +1,19 @@
 <j:jelly xmlns:j="jelly:core"
          xmlns:t="/lib/hudson">
-    <t:summary icon="package.gif">
-        ${%Deployed Artifacts}
-        <ul>
-            <j:forEach var="artifact" items="${it.allArtifacts}">
-                <li>
-                    <a href="deployedArtifacts/download/artifact.${artifact.id}/">${h.escape(artifact.remotePath)}</a>
-                    <br/>
-                </li>
-            </j:forEach>
-        </ul>
-    </t:summary>
+
+    <j:set var="latestDeployedArtifacts" value="${it.allArtifacts}"/>
+    <j:if test="${latestDeployedArtifacts != null and latestDeployedArtifacts.size()!=0}">
+        <t:summary icon="package.gif">
+            ${%Deployed Artifacts}
+            <ul>
+                <j:forEach var="artifact" items="${latestDeployedArtifacts}">
+                    <li>
+                        <a href="deployedArtifacts/download/artifact.${artifact.id}/">${h.escape(artifact.remotePath)}
+                        </a>
+                        <br/>
+                    </li>
+                </j:forEach>
+            </ul>
+        </t:summary>
+    </j:if>
 </j:jelly>
