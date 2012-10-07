@@ -107,7 +107,7 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
         return true;
     }
 
-    private Map<Integer, List<ArtifactDeployerVO>> processDeployment(AbstractBuild<?, ?> build, final BuildListener listener, int currentNbDeployedArtifacts) throws IOException, InterruptedException {
+    private Map<Integer, List<ArtifactDeployerVO>> processDeployment(AbstractBuild<?, ?> build, final BuildListener listener, int currentNbDeployedArtifacts) throws ArtifactDeployerException {
 
         Map<Integer, List<ArtifactDeployerVO>> deployedArtifacts = new HashMap<Integer, List<ArtifactDeployerVO>>();
         FilePath workspace = build.getWorkspace();
@@ -119,10 +119,21 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
                 throw new ArtifactDeployerException("All remote directories must be set.");
             }
 
-            final String includes = build.getEnvironment(listener).expand(entry.getIncludes());
-            final String excludes = build.getEnvironment(listener).expand(entry.getExcludes());
-            final String basedir = build.getEnvironment(listener).expand(entry.getBasedir());
-            final String outputPath = build.getEnvironment(listener).expand(entry.getRemote());
+            final String includes;
+            final String excludes;
+            final String basedir;
+            final String outputPath;
+            try {
+                includes = build.getEnvironment(listener).expand(entry.getIncludes());
+                excludes = build.getEnvironment(listener).expand(entry.getExcludes());
+                basedir = build.getEnvironment(listener).expand(entry.getBasedir());
+                outputPath = build.getEnvironment(listener).expand(entry.getRemote());
+            } catch (IOException ioe) {
+                throw new ArtifactDeployerException(ioe);
+            } catch (InterruptedException ie) {
+                throw new ArtifactDeployerException(ie);
+            }
+
             final boolean flatten = entry.isFlatten();
 
             //Creating the remote directory
@@ -131,6 +142,8 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
                 outputFilePath.mkdirs();
             } catch (IOException ioe) {
                 throw new ArtifactDeployerException(String.format("Can't create the directory '%s'", outputPath), ioe);
+            } catch (InterruptedException ie) {
+                throw new ArtifactDeployerException(String.format("Can't create the directory '%s'", outputPath), ie);
             }
 
             //Deleting files to remote directory if necessary
@@ -140,6 +153,8 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
                     outputFilePath.deleteContents();
                 } catch (IOException ioe) {
                     throw new ArtifactDeployerException(String.format("Can't delete contents of '%s'", outputPath), ioe);
+                } catch (InterruptedException ie) {
+                    throw new ArtifactDeployerException(String.format("Can't delete contents of '%s'", outputPath), ie);
                 }
             }
 
@@ -148,11 +163,47 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
                     new ArtifactDeployerCopy(listener, includes, excludes, flatten, outputFilePath, numberOfCurrentDeployedArtifacts);
             ArtifactDeployerManager deployerManager = new ArtifactDeployerManager();
             FilePath basedirFilPath = deployerManager.getBasedirFilePath(workspace, basedir);
-            List<ArtifactDeployerVO> results = basedirFilPath.act(deployerCopy);
+            List<ArtifactDeployerVO> results;
+            try {
+                results = basedirFilPath.act(deployerCopy);
+            } catch (IOException ioe) {
+                throw new ArtifactDeployerException(ioe);
+            } catch (InterruptedException ie) {
+                throw new ArtifactDeployerException(ie);
+            }
+
+            if (isFailNoFilesDeploy(results, entry)) {
+                throw new ArtifactDeployerException("Can't find any artifacts to deploy with the following configuration :"
+                        + printConfiguration(includes, excludes, basedirFilPath.getRemote(), outputPath));
+            }
+
             numberOfCurrentDeployedArtifacts += results.size();
             deployedArtifacts.put(entry.getUniqueId(), results);
         }
         return deployedArtifacts;
+    }
+
+    private boolean isFailNoFilesDeploy(List<ArtifactDeployerVO> results, ArtifactDeployerEntry entry) {
+        return ((results == null || results.size() == 0) && entry.isFailNoFilesDeploy());
+    }
+
+    private String printConfiguration(String includes, String excludes, String basedir, String outputPath) {
+        StringBuffer sb = new StringBuffer();
+
+        if (includes != null) {
+            sb.append(",includes:").append(includes);
+        }
+        if (excludes != null) {
+            sb.append(",excludes:").append(excludes);
+        }
+
+        sb.append(",basedir:").append(basedir);
+        sb.append(",outPath:").append(outputPath);
+        sb.append("]");
+
+        sb = sb.replace(0, 1, "[");
+
+        return sb.toString();
     }
 
     @SuppressWarnings("unused")
@@ -279,6 +330,7 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
             entry.setRemote(Util.fixEmpty(element.getString("remote")));
             entry.setDeleteRemote(element.getBoolean("deleteRemote"));
             entry.setFlatten(element.getBoolean("flatten"));
+            entry.setFailNoFilesDeploy(element.getBoolean("failNoFilesDeploy"));
             entry.setDeleteRemoteArtifacts(element.getBoolean("deleteRemoteArtifacts"));
             Object deleteRemoteArtifactsObject = element.get("deleteRemoteArtifactsByScript");
             if (deleteRemoteArtifactsObject == null) {

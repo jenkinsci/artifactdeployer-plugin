@@ -23,6 +23,7 @@ public class ArtifactDeployerEntry implements Serializable {
     private boolean deleteRemoteArtifacts;
     private boolean deleteRemoteArtifactsByScript;
     private String groovyExpression;
+    private boolean failNoFilesDeploy;
 
     @SuppressWarnings("unused")
     public String getIncludes() {
@@ -75,6 +76,10 @@ public class ArtifactDeployerEntry implements Serializable {
         return groovyExpression;
     }
 
+    public boolean isFailNoFilesDeploy() {
+        return failNoFilesDeploy;
+    }
+
     public void setIncludes(String includes) {
         this.includes = includes;
     }
@@ -111,6 +116,10 @@ public class ArtifactDeployerEntry implements Serializable {
         this.groovyExpression = groovyExpression;
     }
 
+    public void setFailNoFilesDeploy(boolean failNoFilesDeploy) {
+        this.failNoFilesDeploy = failNoFilesDeploy;
+    }
+
     @SuppressWarnings({"unused", "deprecation"})
     public Object readObject() {
         if (this.deletingRemote) {
@@ -130,6 +139,7 @@ public class ArtifactDeployerEntry implements Serializable {
         result = 31 * result + (deleteRemoteArtifacts ? 1 : 0);
         result = 31 * result + (deleteRemoteArtifactsByScript ? 1 : 0);
         result = 31 * result + (groovyExpression != null ? groovyExpression.hashCode() : 0);
+        result = 31 * result + (failNoFilesDeploy ? 1 : 0);
         return result;
     }
 }
