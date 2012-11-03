@@ -5,7 +5,6 @@ import groovy.lang.GroovyShell;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.Util;
 import hudson.matrix.*;
 import hudson.model.*;
 import hudson.model.listeners.RunListener;
@@ -15,15 +14,13 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.DescribableList;
 import hudson.util.FormValidation;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.artifactdeployer.exception.ArtifactDeployerException;
 import org.jenkinsci.plugins.artifactdeployer.service.ArtifactDeployerCopy;
 import org.jenkinsci.plugins.artifactdeployer.service.ArtifactDeployerManager;
 import org.jenkinsci.plugins.artifactdeployer.service.DeployedArtifactsActionManager;
 import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -36,8 +33,14 @@ import java.util.logging.Logger;
  */
 public class ArtifactDeployerPublisher extends Recorder implements MatrixAggregatable, Serializable {
 
-    private boolean deployEvenBuildFail;
     private List<ArtifactDeployerEntry> entries = Collections.emptyList();
+    private boolean deployEvenBuildFail;
+
+    @DataBoundConstructor
+    public ArtifactDeployerPublisher(List<ArtifactDeployerEntry> deployedArtifact, boolean deployEvenBuildFail) {
+        this.entries = deployedArtifact;
+        this.deployEvenBuildFail = deployEvenBuildFail;
+    }
 
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
@@ -322,46 +325,46 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
         }
 
 
-        private ArtifactDeployerEntry populateAndGetEntry(JSONObject element) {
-            ArtifactDeployerEntry entry = new ArtifactDeployerEntry();
-            entry.setIncludes(Util.fixEmpty(element.getString("includes")));
-            entry.setBasedir(Util.fixEmpty(element.getString("basedir")));
-            entry.setExcludes(Util.fixEmpty(element.getString("excludes")));
-            entry.setRemote(Util.fixEmpty(element.getString("remote")));
-            entry.setDeleteRemote(element.getBoolean("deleteRemote"));
-            entry.setFlatten(element.getBoolean("flatten"));
-            entry.setFailNoFilesDeploy(element.getBoolean("failNoFilesDeploy"));
-            entry.setDeleteRemoteArtifacts(element.getBoolean("deleteRemoteArtifacts"));
-            Object deleteRemoteArtifactsObject = element.get("deleteRemoteArtifactsByScript");
-            if (deleteRemoteArtifactsObject == null) {
-                entry.setDeleteRemoteArtifactsByScript(false);
-            } else {
-                entry.setDeleteRemoteArtifactsByScript(true);
-                entry.setGroovyExpression(Util.fixEmpty(element.getJSONObject("deleteRemoteArtifactsByScript").getString("groovyExpression")));
-            }
-            return entry;
-        }
+//        private ArtifactDeployerEntry populateAndGetEntry(JSONObject element) {
+//            ArtifactDeployerEntry entry = new ArtifactDeployerEntry();
+//            entry.setIncludes(Util.fixEmpty(element.getString("includes")));
+//            entry.setBasedir(Util.fixEmpty(element.getString("basedir")));
+//            entry.setExcludes(Util.fixEmpty(element.getString("excludes")));
+//            entry.setRemote(Util.fixEmpty(element.getString("remote")));
+//            entry.setDeleteRemote(element.getBoolean("deleteRemote"));
+//            entry.setFlatten(element.getBoolean("flatten"));
+//            entry.setFailNoFilesDeploy(element.getBoolean("failNoFilesDeploy"));
+//            entry.setDeleteRemoteArtifacts(element.getBoolean("deleteRemoteArtifacts"));
+//            Object deleteRemoteArtifactsObject = element.get("deleteRemoteArtifactsByScript");
+//            if (deleteRemoteArtifactsObject == null) {
+//                entry.setDeleteRemoteArtifactsByScript(false);
+//            } else {
+//                entry.setDeleteRemoteArtifactsByScript(true);
+//                entry.setGroovyExpression(Util.fixEmpty(element.getJSONObject("deleteRemoteArtifactsByScript").getString("groovyExpression")));
+//            }
+//            return entry;
+//        }
 
-        @Override
-        public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-            ArtifactDeployerPublisher pub = new ArtifactDeployerPublisher();
-            List<ArtifactDeployerEntry> artifactDeployerEntries = new ArrayList<ArtifactDeployerEntry>();
-            Object entries = formData.get("deployedArtifact");
-            if (entries != null) {
-                if (entries instanceof JSONObject) {
-                    artifactDeployerEntries.add(populateAndGetEntry((JSONObject) entries));
-                } else {
-                    JSONArray jsonArray = (JSONArray) entries;
-                    Iterator it = jsonArray.iterator();
-                    while (it.hasNext()) {
-                        artifactDeployerEntries.add(populateAndGetEntry((JSONObject) it.next()));
-                    }
-                }
-            }
-            pub.setEntries(artifactDeployerEntries);
-            pub.setDeployEvenBuildFail(formData.getBoolean("deployEvenBuildFail"));
-            return pub;
-        }
+//        @Override
+//        public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+//            ArtifactDeployerPublisher pub = new ArtifactDeployerPublisher();
+//            List<ArtifactDeployerEntry> artifactDeployerEntries = new ArrayList<ArtifactDeployerEntry>();
+//            Object entries = formData.get("deployedArtifact");
+//            if (entries != null) {
+//                if (entries instanceof JSONObject) {
+//                    artifactDeployerEntries.add(populateAndGetEntry((JSONObject) entries));
+//                } else {
+//                    JSONArray jsonArray = (JSONArray) entries;
+//                    Iterator it = jsonArray.iterator();
+//                    while (it.hasNext()) {
+//                        artifactDeployerEntries.add(populateAndGetEntry((JSONObject) it.next()));
+//                    }
+//                }
+//            }
+//            pub.setEntries(artifactDeployerEntries);
+//            pub.setDeployEvenBuildFail(formData.getBoolean("deployEvenBuildFail"));
+//            return pub;
+//        }
 
         public FormValidation doCheckIncludes(@AncestorInPath AbstractProject project, @QueryParameter String value) throws IOException {
             return FilePath.validateFileMask(project.getSomeWorkspace(), value);

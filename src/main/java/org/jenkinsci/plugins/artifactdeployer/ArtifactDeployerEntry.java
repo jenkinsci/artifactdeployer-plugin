@@ -1,5 +1,7 @@
 package org.jenkinsci.plugins.artifactdeployer;
 
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import java.io.Serializable;
 
 /**
@@ -24,6 +26,29 @@ public class ArtifactDeployerEntry implements Serializable {
     private boolean deleteRemoteArtifactsByScript;
     private String groovyExpression;
     private boolean failNoFilesDeploy;
+
+    public ArtifactDeployerEntry() {
+    }
+
+    @DataBoundConstructor
+    public ArtifactDeployerEntry(String includes, String basedir, String excludes, String remote, boolean flatten, boolean deleteRemote, boolean deleteRemoteArtifacts, DeleteRemoteArtifactsByScriptModel deleteRemoteArtifactsByScript, boolean failNoFilesDeploy) {
+        this.includes = includes;
+        this.basedir = basedir;
+        this.excludes = excludes;
+        this.remote = remote;
+        this.flatten = flatten;
+        this.deleteRemote = deleteRemote;
+        this.deleteRemoteArtifacts = deleteRemoteArtifacts;
+        //this.deleteRemoteArtifactsByScript = deleteRemoteArtifactsByScript;
+        //this.groovyExpression = groovyExpression;
+        if (deleteRemoteArtifactsByScript != null) {
+            this.deleteRemoteArtifactsByScript = true;
+            this.groovyExpression = deleteRemoteArtifactsByScript.getGroovyExpression();
+        } else {
+            this.deleteRemoteArtifactsByScript = false;
+        }
+        this.failNoFilesDeploy = failNoFilesDeploy;
+    }
 
     @SuppressWarnings("unused")
     public String getIncludes() {
