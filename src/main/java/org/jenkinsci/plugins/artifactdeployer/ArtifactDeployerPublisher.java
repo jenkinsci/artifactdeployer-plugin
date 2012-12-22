@@ -56,7 +56,9 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
 
             @Override
             public boolean endRun(MatrixRun run) throws InterruptedException, IOException {
-                return _perform(run, launcher, listener);
+                boolean result = _perform(run, launcher, listener);
+                run.save();
+                return result;
             }
 
         };
