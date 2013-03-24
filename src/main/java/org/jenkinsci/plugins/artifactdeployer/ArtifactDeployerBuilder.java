@@ -75,9 +75,7 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
         //Creating the remote directory
         final FilePath outputFilePath = new FilePath(workspace.getChannel(), outputPath);
         try {
-            if (outputFilePath.exists() == false) {
-                outputFilePath.mkdirs();
-            }
+            outputFilePath.mkdirs();
         } catch (IOException ioe) {
             throw new ArtifactDeployerException(String.format("Can't create the directory '%s'", outputPath), ioe);
         }
