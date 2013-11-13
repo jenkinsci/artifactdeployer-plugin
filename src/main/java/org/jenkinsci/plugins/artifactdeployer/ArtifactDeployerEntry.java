@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.artifactdeployer;
 
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.Serializable;
@@ -93,7 +94,7 @@ public class ArtifactDeployerEntry implements Serializable {
 
     @SuppressWarnings("unused")
     public boolean isDeleteRemoteArtifactsByScript() {
-        return deleteRemoteArtifactsByScript;
+        return StringUtils.isNotBlank(groovyExpression);
     }
 
     @SuppressWarnings("unused")

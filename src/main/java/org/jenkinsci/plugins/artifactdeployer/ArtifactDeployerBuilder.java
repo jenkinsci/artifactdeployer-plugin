@@ -5,21 +5,19 @@ import groovy.lang.GroovyShell;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.Util;
 import hudson.model.*;
 import hudson.model.listeners.RunListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.DescribableList;
 import hudson.util.FormValidation;
-import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.artifactdeployer.exception.ArtifactDeployerException;
 import org.jenkinsci.plugins.artifactdeployer.service.ArtifactDeployerCopy;
 import org.jenkinsci.plugins.artifactdeployer.service.ArtifactDeployerManager;
 import org.jenkinsci.plugins.artifactdeployer.service.DeployedArtifactsActionManager;
 import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -33,6 +31,14 @@ import java.util.logging.Logger;
 public class ArtifactDeployerBuilder extends Builder implements Serializable {
 
     ArtifactDeployerEntry entry;
+    
+    @DataBoundConstructor
+    public ArtifactDeployerBuilder(String includes, String basedir, String excludes, String remote, boolean flatten, boolean deleteRemote, boolean deleteRemoteArtifacts, DeleteRemoteArtifactsByScriptModel deleteRemoteArtifactsByScript, boolean failNoFilesDeploy) {
+        this.entry = new ArtifactDeployerEntry(includes, basedir, excludes, remote, flatten, deleteRemote, deleteRemoteArtifacts, deleteRemoteArtifactsByScript, failNoFilesDeploy);
+    }
+    
+    public ArtifactDeployerBuilder() {
+    }
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
@@ -205,28 +211,6 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
         @Override
         public String getDisplayName() {
             return DISPLAY_NAME;
-        }
-
-        @Override
-        public Builder newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-            ArtifactDeployerBuilder builder = new ArtifactDeployerBuilder();
-            ArtifactDeployerEntry entry = new ArtifactDeployerEntry();
-            entry.setIncludes(Util.fixEmpty(formData.getString("includes")));
-            entry.setBasedir(Util.fixEmpty(formData.getString("basedir")));
-            entry.setExcludes(Util.fixEmpty(formData.getString("excludes")));
-            entry.setRemote(Util.fixEmpty(formData.getString("remote")));
-            entry.setDeleteRemote(formData.getBoolean("deleteRemote"));
-            entry.setFlatten(formData.getBoolean("flatten"));
-            entry.setDeleteRemoteArtifacts(formData.getBoolean("deleteRemoteArtifacts"));
-            Object deleteRemoteArtifactsObject = formData.get("deleteRemoteArtifactsByScript");
-            if (deleteRemoteArtifactsObject == null) {
-                entry.setDeleteRemoteArtifactsByScript(false);
-            } else {
-                entry.setDeleteRemoteArtifactsByScript(true);
-                entry.setGroovyExpression(Util.fixEmpty(formData.getJSONObject("deleteRemoteArtifactsByScript").getString("groovyExpression")));
-            }
-            builder.setEntry(entry);
-            return builder;
         }
 
         public FormValidation doCheckIncludes(@AncestorInPath AbstractProject project, @QueryParameter String value) throws IOException {
