@@ -41,7 +41,7 @@
                 <f:optionalBlock
                         field="deleteRemoteArtifactsByScript"
                         name="artifactdeployer.entry.deleteRemoteArtifactsByScript"
-                        checked="${instance.entry.deletedRemoteArtifactsByScript}"
+                        checked="${instance.entry.deleteRemoteArtifactsByScript}"
                         title="${%Execute a groovy script when the job is deleted}">
 
                     <f:entry field="groovyExpression" title="${%Groovy Expression}">

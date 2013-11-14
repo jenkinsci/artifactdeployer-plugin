@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.424</version>
+        <version>1.480</version>
     </parent>
 
     <artifactId>artifactdeployer</artifactId>
@@ -70,6 +70,15 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.jvnet.localizer</groupId>
+                    <artifactId>maven-localizer-plugin</artifactId>
+                    <version>1.14</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>    
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -94,6 +103,12 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jenkins-ci.tools</groupId>
+                <artifactId>maven-hpi-plugin</artifactId>
+                <version>1.100</version>
+                <extensions>true</extensions>
+            </plugin>            
         </plugins>
     </build>
 
