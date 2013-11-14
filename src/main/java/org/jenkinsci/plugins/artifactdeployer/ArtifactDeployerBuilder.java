@@ -31,12 +31,12 @@ import java.util.logging.Logger;
 public class ArtifactDeployerBuilder extends Builder implements Serializable {
 
     ArtifactDeployerEntry entry;
-    
+
     @DataBoundConstructor
     public ArtifactDeployerBuilder(String includes, String basedir, String excludes, String remote, boolean flatten, boolean deleteRemote, boolean deleteRemoteArtifacts, DeleteRemoteArtifactsByScriptModel deleteRemoteArtifactsByScript, boolean failNoFilesDeploy) {
         this.entry = new ArtifactDeployerEntry(includes, basedir, excludes, remote, flatten, deleteRemote, deleteRemoteArtifacts, deleteRemoteArtifactsByScript, failNoFilesDeploy);
     }
-    
+
     public ArtifactDeployerBuilder() {
     }
 

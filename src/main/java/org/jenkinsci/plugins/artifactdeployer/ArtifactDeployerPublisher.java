@@ -40,14 +40,14 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
     public ArtifactDeployerPublisher(List<ArtifactDeployerEntry> deployedArtifact, boolean deployEvenBuildFail) {
         this.entries = deployedArtifact;
         this.deployEvenBuildFail = deployEvenBuildFail;
-        if(this.entries == null)
-        	this.entries = Collections.emptyList();
+        if (this.entries == null)
+            this.entries = Collections.emptyList();
     }
-    
+
     public Object readResolve() {
-    	if(this.entries == null)
-    		this.entries = Collections.emptyList();
-    	return this;
+        if (this.entries == null)
+            this.entries = Collections.emptyList();
+        return this;
     }
 
     public BuildStepMonitor getRequiredMonitorService() {
