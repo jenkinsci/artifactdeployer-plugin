@@ -40,8 +40,9 @@
     </properties>
 
     <scm>
-        <connection>scm:git:https://github.com/jenkinsci/artifactdeployer-plugin.git</connection>
-        <developerConnection>scm:git:https://github.com/jenkinsci/artifactdeployer-plugin.git</developerConnection>
+        <connection>scm:git:ssh://github.com/jenkinsci/artifactdeployer-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/artifactdeployer-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/artifactdeployer-plugin</url>
     </scm>
 
     <dependencies>
