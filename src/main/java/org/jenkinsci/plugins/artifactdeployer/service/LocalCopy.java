@@ -3,7 +3,7 @@ package org.jenkinsci.plugins.artifactdeployer.service;
 import com.atlassian.ant.tasks.CopyWithPerms;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
-import org.jenkinsci.plugins.artifactdeployer.exception.ArtifactDeployerException;
+import org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerException;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class LocalCopy {
         CopyImpl copyTask = new CopyImpl();
         copyTask.setTodir(target);
         copyTask.addFileset(fileSet);
-        //Do not overwrite file: the plugin has the delete content directory previously feature
+        //Do not overwrite file: the plugin has the delete content directory previously
         copyTask.setOverwrite(false);
         copyTask.setIncludeEmptyDirs(true);
         copyTask.setFlatten(flatten);

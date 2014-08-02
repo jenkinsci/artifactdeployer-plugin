@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.artifactdeployer.service;
 
 import hudson.FilePath;
-import org.jenkinsci.plugins.artifactdeployer.exception.ArtifactDeployerException;
+import org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerException;
 
 import java.io.IOException;
 

@@ -11,7 +11,6 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.DescribableList;
 import hudson.util.FormValidation;
-import org.jenkinsci.plugins.artifactdeployer.exception.ArtifactDeployerException;
 import org.jenkinsci.plugins.artifactdeployer.service.ArtifactDeployerCopy;
 import org.jenkinsci.plugins.artifactdeployer.service.ArtifactDeployerManager;
 import org.jenkinsci.plugins.artifactdeployer.service.DeployedArtifactsActionManager;

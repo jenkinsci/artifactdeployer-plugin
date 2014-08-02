@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.artifactdeployer.exception;
+package org.jenkinsci.plugins.artifactdeployer;
 
 /**
  * @author Gregory Boissinot
