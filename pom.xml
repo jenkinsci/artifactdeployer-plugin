@@ -10,7 +10,7 @@
     <artifactId>artifactdeployer</artifactId>
     <packaging>hpi</packaging>
     <name>Jenkins Artifact Deployer Plug-in</name>
-    <version>0.31</version>
+    <version>0.32-SNAPSHOT</version>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/ArtifactDeployer+Plugin</url>
 
     <licenses>
@@ -43,7 +43,7 @@
         <connection>scm:git:ssh://github.com/jenkinsci/artifactdeployer-plugin.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/jenkinsci/artifactdeployer-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/artifactdeployer-plugin</url>
-      <tag>artifactdeployer-0.31</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <dependencies>
