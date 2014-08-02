@@ -29,12 +29,4 @@ public class DeployedArtifacts implements Action {
         return deployedArtifactsInfo;
     }
 
-    //    private Object readResolve() throws ObjectStreamException {
-//        if (deployedArtifactsInfo != null) {
-//            final ArtifactDeployerBuildAction artifactDeployerBuildAction = new ArtifactDeployerBuildAction();
-//            artifactDeployerBuildAction.setArtifactsInfo(null, deployedArtifactsInfo);
-//            return artifactDeployerBuildAction;
-//        }
-//        return this;
-//    }
 }
