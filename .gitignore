@@ -5,4 +5,5 @@ target
 *.ipr
 *.iws
 *.iml
+.idea
 work
