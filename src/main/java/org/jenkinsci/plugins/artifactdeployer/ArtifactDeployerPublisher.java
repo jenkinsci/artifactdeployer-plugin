@@ -100,10 +100,10 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
 
             listener.getLogger().println("[ArtifactDeployer] - Starting deployment from the post-action ...");
             DeployedArtifactsActionManager deployedArtifactsService = DeployedArtifactsActionManager.getInstance();
-            DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAction(build);
+            ArtifactDeployerBuildAction artifactDeployerBuildActionAction = deployedArtifactsService.getOrCreateAction(build);
             Map<Integer, List<ArtifactDeployerVO>> deployedArtifacts;
             try {
-                int currentTotalDeployedCounter = deployedArtifactsAction.getDeployedArtifactsInfo().size();
+                int currentTotalDeployedCounter = artifactDeployerBuildActionAction.getDeployedArtifactsInfo().size();
                 deployedArtifacts = processDeployment(build, listener, currentTotalDeployedCounter);
             } catch (ArtifactDeployerException ae) {
                 listener.getLogger().println("[ArtifactDeployer] - [ERROR] - Failed to deploy. " + ae.getMessage());
@@ -114,7 +114,7 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
                 return false;
             }
 
-            deployedArtifactsAction.addDeployedArtifacts(deployedArtifacts);
+            artifactDeployerBuildActionAction.setArtifactsInfo(build, deployedArtifacts);
             listener.getLogger().println("[ArtifactDeployer] - Stopping deployment from the post-action...");
         }
         return true;
@@ -242,7 +242,6 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
 
         private final Logger logger = Logger.getLogger(DeleteRemoteArtifact.class.getName());
 
-
         @Override
         public void onDeleted(AbstractBuild build) {
 
@@ -262,9 +261,9 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
             }
 
             if (artifactDeployerPublisher != null) {
-                DeployedArtifacts deployedArtifacts = build.getAction(DeployedArtifacts.class);
-                if (deployedArtifacts != null) {
-                    Map<Integer, List<ArtifactDeployerVO>> info = deployedArtifacts.getDeployedArtifactsInfo();
+                ArtifactDeployerBuildAction artifactDeployerBuildAction = build.getAction(ArtifactDeployerBuildAction.class);
+                if (artifactDeployerBuildAction != null) {
+                    Map<Integer, List<ArtifactDeployerVO>> info = artifactDeployerBuildAction.getDeployedArtifactsInfo();
                     if (info != null) {
                         for (ArtifactDeployerEntry entry : artifactDeployerPublisher.getEntries()) {
                             //Delete output
@@ -302,7 +301,7 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
                             if (entry.isDeleteRemoteArtifactsByScript()) {
                                 //Inject list artifacts as variable
                                 Binding binding = new Binding();
-                                if (deployedArtifacts != null) {
+                                if (artifactDeployerBuildAction != null) {
                                     List<ArtifactDeployerVO> listArtifacts = info.get(entry.getUniqueId());
                                     binding.setVariable("ARTIFACTS", listArtifacts);
                                 }
@@ -334,48 +333,6 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
             return DISPLAY_NAME;
         }
 
-
-//        private ArtifactDeployerEntry populateAndGetEntry(JSONObject element) {
-//            ArtifactDeployerEntry entry = new ArtifactDeployerEntry();
-//            entry.setIncludes(Util.fixEmpty(element.getString("includes")));
-//            entry.setBasedir(Util.fixEmpty(element.getString("basedir")));
-//            entry.setExcludes(Util.fixEmpty(element.getString("excludes")));
-//            entry.setRemote(Util.fixEmpty(element.getString("remote")));
-//            entry.setDeleteRemote(element.getBoolean("deleteRemote"));
-//            entry.setFlatten(element.getBoolean("flatten"));
-//            entry.setFailNoFilesDeploy(element.getBoolean("failNoFilesDeploy"));
-//            entry.setDeleteRemoteArtifacts(element.getBoolean("deleteRemoteArtifacts"));
-//            Object deleteRemoteArtifactsObject = element.get("deleteRemoteArtifactsByScript");
-//            if (deleteRemoteArtifactsObject == null) {
-//                entry.setDeleteRemoteArtifactsByScript(false);
-//            } else {
-//                entry.setDeleteRemoteArtifactsByScript(true);
-//                entry.setGroovyExpression(Util.fixEmpty(element.getJSONObject("deleteRemoteArtifactsByScript").getString("groovyExpression")));
-//            }
-//            return entry;
-//        }
-
-//        @Override
-//        public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-//            ArtifactDeployerPublisher pub = new ArtifactDeployerPublisher();
-//            List<ArtifactDeployerEntry> artifactDeployerEntries = new ArrayList<ArtifactDeployerEntry>();
-//            Object entries = formData.get("deployedArtifact");
-//            if (entries != null) {
-//                if (entries instanceof JSONObject) {
-//                    artifactDeployerEntries.add(populateAndGetEntry((JSONObject) entries));
-//                } else {
-//                    JSONArray jsonArray = (JSONArray) entries;
-//                    Iterator it = jsonArray.iterator();
-//                    while (it.hasNext()) {
-//                        artifactDeployerEntries.add(populateAndGetEntry((JSONObject) it.next()));
-//                    }
-//                }
-//            }
-//            pub.setEntries(artifactDeployerEntries);
-//            pub.setDeployEvenBuildFail(formData.getBoolean("deployEvenBuildFail"));
-//            return pub;
-//        }
-
         public FormValidation doCheckIncludes(@AncestorInPath AbstractProject project, @QueryParameter String value) throws IOException {
             return FilePath.validateFileMask(project.getSomeWorkspace(), value);
         }
@@ -393,6 +350,6 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
             }
             return FormValidation.ok();
         }
-
     }
+
 }

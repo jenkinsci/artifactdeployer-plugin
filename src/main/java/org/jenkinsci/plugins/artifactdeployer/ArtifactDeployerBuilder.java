@@ -45,7 +45,7 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
 
         listener.getLogger().println("[ArtifactDeployer] - Starting deployment from the build step ...");
         DeployedArtifactsActionManager deployedArtifactsService = DeployedArtifactsActionManager.getInstance();
-        DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAction(build);
+        ArtifactDeployerBuildAction artifactDeployerBuildActionAction = deployedArtifactsService.getOrCreateAction(build);
         final FilePath workspace = build.getWorkspace();
         Map<Integer, List<ArtifactDeployerVO>> deployedArtifacts;
         try {
@@ -59,7 +59,7 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
             return false;
         }
 
-        deployedArtifactsAction.addDeployedArtifacts(deployedArtifacts);
+        artifactDeployerBuildActionAction.setArtifactsInfo(build, deployedArtifacts);
         listener.getLogger().println("[ArtifactDeployer] - Stopping deployment from the build step ...");
 
         return true;
@@ -98,8 +98,8 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
 
         //Copying files to remote directory
         DeployedArtifactsActionManager deployedArtifactsService = DeployedArtifactsActionManager.getInstance();
-        DeployedArtifacts deployedArtifactsAction = deployedArtifactsService.getOrCreateAction(build);
-        int numberOfCurrentDeployedArtifacts = deployedArtifactsAction.getDeployedArtifactsInfo().size();
+        ArtifactDeployerBuildAction artifactDeployerBuildActionAction = deployedArtifactsService.getOrCreateAction(build);
+        int numberOfCurrentDeployedArtifacts = artifactDeployerBuildActionAction.getDeployedArtifactsInfo().size();
         ArtifactDeployerCopy deployerCopy =
                 new ArtifactDeployerCopy(listener, includes, excludes, flatten, outputFilePath, numberOfCurrentDeployedArtifacts);
         ArtifactDeployerManager deployerManager = new ArtifactDeployerManager();
@@ -148,9 +148,9 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
 
             //Process all ArtifactDeployerBuilder instance
             for (ArtifactDeployerBuilder artifactDeployerBuilder : artifactDeployerBuilders) {
-                DeployedArtifacts deployedArtifacts = build.getAction(DeployedArtifacts.class);
-                if (deployedArtifacts != null) {
-                    Map<Integer, List<ArtifactDeployerVO>> info = deployedArtifacts.getDeployedArtifactsInfo();
+                ArtifactDeployerBuildAction artifactDeployerBuildAction = build.getAction(ArtifactDeployerBuildAction.class);
+                if (artifactDeployerBuildAction != null) {
+                    Map<Integer, List<ArtifactDeployerVO>> info = artifactDeployerBuildAction.getDeployedArtifactsInfo();
                     if (info != null) {
                         ArtifactDeployerEntry entry = artifactDeployerBuilder.getEntry();
 
@@ -183,7 +183,7 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
                         if (entry.isDeleteRemoteArtifactsByScript()) {
                             //Inject list artifacts as variable
                             Binding binding = new Binding();
-                            if (deployedArtifacts != null) {
+                            if (artifactDeployerBuildAction != null) {
                                 List<ArtifactDeployerVO> listArtifacts = info.get(entry.getUniqueId());
                                 binding.setVariable("ARTIFACTS", listArtifacts);
                             }

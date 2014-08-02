@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.artifactdeployer.service;
 
 import hudson.model.AbstractBuild;
-import org.jenkinsci.plugins.artifactdeployer.DeployedArtifacts;
+import org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerBuildAction;
 
 import java.io.Serializable;
 
@@ -19,11 +19,11 @@ public class DeployedArtifactsActionManager implements Serializable {
         return INSTANCE;
     }
 
-    public DeployedArtifacts getOrCreateAction(AbstractBuild<?, ?> build) {
+    public ArtifactDeployerBuildAction getOrCreateAction(AbstractBuild<?, ?> build) {
 
-        DeployedArtifacts action = build.getAction(DeployedArtifacts.class);
+        ArtifactDeployerBuildAction action = build.getAction(ArtifactDeployerBuildAction.class);
         if (action == null) {
-            action = new DeployedArtifacts();
+            action = new ArtifactDeployerBuildAction();
             build.addAction(action);
         }
         return action;

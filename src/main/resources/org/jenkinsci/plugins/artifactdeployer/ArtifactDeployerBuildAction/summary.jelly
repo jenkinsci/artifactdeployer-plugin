@@ -22,13 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
-    <table style="margin-top: 1em; margin-left:1em;">
-        <t:summary icon="${it.iconFileName}">
-            <div>
-                <j:set var="lastSuccessfulNumber" value="${it.lastSuccessfulNumber}"/>
-                <a href="${lastSuccessfulNumber}/deployedArtifacts/">${it.displayName}</a>
-            </div>
-        </t:summary>
-    </table>
+<j:jelly xmlns:j="jelly:core"
+         xmlns:t="/lib/hudson">
+    <t:summary icon="${it.iconFileName}">
+        <div>
+            <a href="${it.urlName}">${it.displayName}</a>
+        </div>
+    </t:summary>
 </j:jelly>

@@ -22,13 +22,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
-    <table style="margin-top: 1em; margin-left:1em;">
-        <t:summary icon="${it.iconFileName}">
-            <div>
-                <j:set var="lastSuccessfulNumber" value="${it.lastSuccessfulNumber}"/>
-                <a href="${lastSuccessfulNumber}/deployedArtifacts/">${it.displayName}</a>
-            </div>
-        </t:summary>
-    </table>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+    <l:layout norefresh="true">
+        <st:include it="${it.owner}" page="sidepanel.jelly"/>
+        <l:main-panel>
+            <h1>
+                <img src="${imagesURL}/48x48/package.gif" alt="" height="48" width="48"/>
+                ${%Deployed Artifacts} #${it.owner.number}
+            </h1>
+            <j:set var="latestDeployedArtifacts" value="${it.allArtifacts}"/>
+            <table class="fileList">
+                <j:forEach var="artifact" items="${latestDeployedArtifacts}">
+                    <tr>
+                        <td>
+                            <img src="${imagesURL}/16x16/text.png" alt="" height="16" width="16"/>
+                        </td>
+                        <td>
+                            ${h.escape(artifact.remotePath)}
+                        </td>
+                        <td>
+                            <a href="download/artifact.${artifact.id}/">download</a>
+                        </td>
+                    </tr>
+                </j:forEach>
+            </table>
+        </l:main-panel>
+    </l:layout>
 </j:jelly>
