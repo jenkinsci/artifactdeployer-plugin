@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -11,7 +10,7 @@
     <artifactId>artifactdeployer</artifactId>
     <packaging>hpi</packaging>
     <name>Jenkins Artifact Deployer Plug-in</name>
-    <version>0.31-SNAPSHOT</version>
+    <version>0.31</version>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/ArtifactDeployer+Plugin</url>
 
     <licenses>
@@ -44,7 +43,8 @@
         <connection>scm:git:ssh://github.com/jenkinsci/artifactdeployer-plugin.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/jenkinsci/artifactdeployer-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/artifactdeployer-plugin</url>
-    </scm>
+      <tag>artifactdeployer-0.31</tag>
+  </scm>
 
     <dependencies>
         <dependency>
