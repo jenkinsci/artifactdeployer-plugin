@@ -24,7 +24,7 @@ THE SOFTWARE.
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
-    <f:entry field="includes" title="${%Files to deploy}">
+    <f:entry field="includes" title="${%Artifacts to deploy}">
         <f:textbox name="artifactdeployer.entry.includes" value="${instance.entry.includes}"/>
     </f:entry>
 

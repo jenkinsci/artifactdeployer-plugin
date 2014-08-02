@@ -30,7 +30,7 @@ THE SOFTWARE.
 
             <table width="100%">
 
-                <f:entry field="includes" title="${%Files to deploy}">
+                <f:entry field="includes" title="${%Artifacts to deploy}">
                     <f:textbox name="artifactdeployer.entry.includes" value="${deployedArtifact.includes}"/>
                 </f:entry>
 
