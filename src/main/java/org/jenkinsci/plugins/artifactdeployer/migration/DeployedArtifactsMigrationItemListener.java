@@ -2,11 +2,11 @@ package org.jenkinsci.plugins.artifactdeployer.migration;
 
 import hudson.Extension;
 import hudson.model.AbstractBuild;
-import hudson.model.Hudson;
 import hudson.model.Job;
 import hudson.model.TopLevelItem;
 import hudson.model.listeners.ItemListener;
 import hudson.util.RunList;
+import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerBuildAction;
 import org.jenkinsci.plugins.artifactdeployer.DeployedArtifacts;
 
@@ -20,46 +20,28 @@ public class DeployedArtifactsMigrationItemListener extends ItemListener {
 
     @Override
     public void onLoaded() {
-        List<TopLevelItem> items = Hudson.getInstance().getItems();
+        List<TopLevelItem> items = Jenkins.getInstance().getItems();
         for (TopLevelItem item : items) {
             if (item instanceof Job) {
                 Job job = (Job) item;
                 final RunList builds = job.getBuilds();
                 if (builds != null) {
                     for (Object build : builds) {
-                        AbstractBuild<?, ?> abstractBuild = (AbstractBuild) build;
-                        ArtifactDeployerBuildAction artifactDeployerBuildAction = new ArtifactDeployerBuildAction();
-                        final List<DeployedArtifacts> actions = abstractBuild.getActions(DeployedArtifacts.class);
-                        if (actions != null) {
-                            for (DeployedArtifacts action : actions) {
-                                artifactDeployerBuildAction.setArtifactsInfo((AbstractBuild) abstractBuild, action.getDeployedArtifactsInfo());
+                        if (build instanceof AbstractBuild) {
+                            AbstractBuild<?, ?> abstractBuild = (AbstractBuild) build;
+                            final List<DeployedArtifacts> actions = abstractBuild.getActions(DeployedArtifacts.class);
+                            if (actions != null) {
+                                ArtifactDeployerBuildAction artifactDeployerBuildAction = new ArtifactDeployerBuildAction();
+                                for (DeployedArtifacts action : actions) {
+                                    artifactDeployerBuildAction.setArtifactsInfo((AbstractBuild) abstractBuild, action.getDeployedArtifactsInfo());
+                                }
+                                abstractBuild.addAction(artifactDeployerBuildAction);
                             }
-                            abstractBuild.addAction(artifactDeployerBuildAction);
-//                            try {
-//                                abstractBuild.add();
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
                         }
                     }
                 }
             }
         }
     }
-//    @Override
-//    public void onStarted(Run run, TaskListener listener) {
-//        //final DeployedArtifacts action = run.getAction(DeployedArtifacts.class);
-//        ArtifactDeployerBuildAction artifactDeployerBuildAction = new ArtifactDeployerBuildAction();
-//        final List<DeployedArtifacts> actions = run.getActions(DeployedArtifacts.class);
-//        for (DeployedArtifacts action : actions) {
-//            artifactDeployerBuildAction.setArtifactsInfo((AbstractBuild) run, action.getDeployedArtifactsInfo());
-//            actions.remove(action);
-//        }
-//        run.addAction(artifactDeployerBuildAction);
-//        try {
-//            run.save();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+
 }
