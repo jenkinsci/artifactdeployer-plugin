@@ -9,6 +9,7 @@ import java.util.Map;
 /**
  * @author Gregory Boissinot
  */
+@Deprecated
 public class DeployedArtifacts implements Action {
 
     private Map<Integer, List<ArtifactDeployerVO>> deployedArtifactsInfo = new HashMap<Integer, List<ArtifactDeployerVO>>();
@@ -27,6 +28,13 @@ public class DeployedArtifacts implements Action {
 
     public Map<Integer, List<ArtifactDeployerVO>> getDeployedArtifactsInfo() {
         return deployedArtifactsInfo;
+    }
+
+    @SuppressWarnings("unused")
+    private Object readResolve() {
+        final ArtifactDeployerBuildAction artifactDeployerBuildAction = new ArtifactDeployerBuildAction();
+        artifactDeployerBuildAction.setArtifactsInfo(null, deployedArtifactsInfo);
+        return artifactDeployerBuildAction;
     }
 
 }

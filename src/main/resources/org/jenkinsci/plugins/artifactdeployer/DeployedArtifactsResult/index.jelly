@@ -24,11 +24,16 @@ THE SOFTWARE.
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
     <l:layout norefresh="true">
-        <st:include it="${it.owner}" page="sidepanel.jelly"/>
+        <j:if test="${it.owner != null}">
+            <st:include it="${it.owner}" page="sidepanel.jelly"/>
+        </j:if>
         <l:main-panel>
             <h1>
                 <img src="${imagesURL}/48x48/package.gif" alt="" height="48" width="48"/>
-                ${%Deployed Artifacts} #${it.owner.number}
+                ${%Deployed Artifacts}
+                <j:if test="${it.owner != null}">
+                    #${it.owner.number}
+                </j:if>
             </h1>
             <j:set var="latestDeployedArtifacts" value="${it.allArtifacts}"/>
             <table class="fileList">
