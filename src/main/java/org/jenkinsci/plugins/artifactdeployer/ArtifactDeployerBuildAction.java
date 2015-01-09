@@ -54,6 +54,14 @@ public class ArtifactDeployerBuildAction implements Action, StaplerProxy {
         return this.deployedArtifactsInfo;
     }
 
+    public int getDeployedArtifactsCount() {
+        int count = 0;
+        for (List<ArtifactDeployerVO> artifactDeployerVOs : deployedArtifactsInfo.values()) {
+            count += artifactDeployerVOs.size();
+        }
+        return count;
+    }
+
     public String getIconFileName() {
         return "package.gif";
     }
