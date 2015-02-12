@@ -120,7 +120,7 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
         //Copying files to remote directory
         DeployedArtifactsActionManager deployedArtifactsService = DeployedArtifactsActionManager.getInstance();
         ArtifactDeployerBuildAction artifactDeployerBuildActionAction = deployedArtifactsService.getOrCreateAction(build);
-        int numberOfCurrentDeployedArtifacts = artifactDeployerBuildActionAction.getDeployedArtifactsInfo().size();
+        int numberOfCurrentDeployedArtifacts = artifactDeployerBuildActionAction.getDeployedArtifactsCount();
         ArtifactDeployerCopy deployerCopy =
                 new ArtifactDeployerCopy(listener, includes, excludes, flatten, outputFilePath, numberOfCurrentDeployedArtifacts);
         ArtifactDeployerManager deployerManager = new ArtifactDeployerManager();
