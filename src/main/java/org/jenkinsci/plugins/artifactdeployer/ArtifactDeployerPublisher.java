@@ -25,9 +25,9 @@ package org.jenkinsci.plugins.artifactdeployer;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import hudson.Extension;
+import hudson.ExtensionList;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.matrix.*;
 import hudson.model.*;
 import hudson.model.listeners.RunListener;
 import hudson.tasks.BuildStepDescriptor;
@@ -36,6 +36,7 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.DescribableList;
 import hudson.util.FormValidation;
+import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.artifactdeployer.service.ArtifactDeployerCopy;
 import org.jenkinsci.plugins.artifactdeployer.service.ArtifactDeployerManager;
 import org.jenkinsci.plugins.artifactdeployer.service.DeployedArtifactsActionManager;
@@ -52,7 +53,7 @@ import java.util.logging.Logger;
 /**
  * @author Gregory Boissinot
  */
-public class ArtifactDeployerPublisher extends Recorder implements MatrixAggregatable, Serializable {
+public class ArtifactDeployerPublisher extends Recorder implements Serializable {
 
     private List<ArtifactDeployerEntry> entries = Collections.emptyList();
     private boolean deployEvenBuildFail;
@@ -80,28 +81,6 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
         return Arrays.asList(new ArtifactDeployerProjectAction(project));
     }
 
-    public MatrixAggregator createAggregator(MatrixBuild build, Launcher launcher, BuildListener listener) {
-        return new MatrixAggregator(build, launcher, listener) {
-
-            @Override
-            public boolean endRun(MatrixRun run) throws InterruptedException, IOException {
-                boolean result = _perform(run, launcher, listener);
-                run.save();
-                return result;
-            }
-
-        };
-    }
-
-    @Override
-    public boolean perform(hudson.model.AbstractBuild<?, ?> build, hudson.Launcher launcher, hudson.model.BuildListener listener) throws java.lang.InterruptedException, java.io.IOException {
-        if (!(build.getProject() instanceof MatrixConfiguration)) {
-            return _perform(build, launcher, listener);
-        }
-        return true;
-    }
-
-
     private boolean isPerformDeployment(AbstractBuild build) {
         Result result = build.getResult();
         if (result == null) {
@@ -115,7 +94,8 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
         return build.getResult().isBetterOrEqualTo(Result.UNSTABLE);
     }
 
-    private boolean _perform(hudson.model.AbstractBuild<?, ?> build, hudson.Launcher launcher, hudson.model.BuildListener listener) throws java.lang.InterruptedException, java.io.IOException {
+    @Override
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws java.lang.InterruptedException, java.io.IOException {
 
         if (isPerformDeployment(build)) {
 
@@ -340,12 +320,21 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
 
     @Extension
     @SuppressWarnings("unused")
-    public static final class ArtifactDeployerDescriptor extends BuildStepDescriptor<Publisher> {
+    public static class ArtifactDeployerDescriptor extends BuildStepDescriptor<Publisher> {
 
         public static final String DISPLAY_NAME = Messages.depployerartifact_displayName();
 
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+
+            ExtensionList<ArtifactDeployerDescriptor> e = Jenkins.getInstance().getExtensionList(ArtifactDeployerDescriptor.class);
+            for (ArtifactDeployerDescriptor d : e) {
+                // If another ArtifactDeployerDescriptor better matches this jobType, let it handle it.
+                if (d != this && d.isApplicable(jobType)) {
+                    return false;
+                }
+            }
+
             return true;
         }
 
