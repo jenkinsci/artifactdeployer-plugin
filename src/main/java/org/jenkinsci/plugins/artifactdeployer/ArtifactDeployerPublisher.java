@@ -69,6 +69,12 @@ public class ArtifactDeployerPublisher extends Recorder implements Serializable 
     public Object readResolve() {
         if (this.entries == null)
             this.entries = Collections.emptyList();
+
+        if (Jenkins.getInstance().getPlugin("maven-project") != null)
+            // To do it right, Would need to detect parent project is a Matrix one
+            // anyway, until project is re-saved this is ok to rely on this superclass
+            return new MatrixArtifactDeployerPublisher(entries, deployEvenBuildFail);
+
         return this;
     }
 
