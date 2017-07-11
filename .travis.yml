@@ -6,3 +6,6 @@ deploy:
     secure: "InJlegbaieloea85f3DbzizAwmCWE5bQHzNY2JA/p6j3rY3w6urDZtvjY1/WaOttot8o7uehEm4lpXpB+sF5+tLYcMea6ibheC93E8Akh1eBrhlG4qQGZwvflkWUtniviqED0vUZd5TYkMKpdc29u+emzWX/lvlv0zSiFYKiuiCjuQxNvUhuvrJRoU0/yOqOYJmQSlNNeC2OmPoIm1WC7Y4imX6noF6G8+pQD+N5rT8Afyvs/cWoQaT8zehp4bVYgY26EdozblSoc7pQDJv6bhTwCdrq7aBH+XQBFKd5dLdnbrCLkOM1IkO+LBwMIUd8/qU0qVO9vkPAq8vzcn6hnR3ap+Wd19HGPQVfeb9b9/kHK1d6/CdvBlP9txwXgQD0HDWkNONhoPxVRucyAux3PJpVlsS89G24zhx7QcrPb1k9e2sXFfEB54PCGkFF3MdosmevV5MY0AtZDh31i5nHo2dc0607xGAPGNWv8bORmyin3NITV0Hir+qBPZRjfCXXfgQwKntT/H9fLiD2ziJdZLV4Ss+OcmJSG4uhVFO/RDA/SWtJvpBIWyUvH/bqS/VVxVsxzMfgG+sNoZ6RzqZCH8kUjOtDEONNRj0teBIPN4FqIsccStQlDSdkYvDXxegKKD7uDp1npyd11a4Zs60LHgq+aUZrimHkluRfZg8JJ10="
   file: 'target/artifactdeployer.hpi'
   skip_cleanup: true
+  on:
+    tags: true
+    all_branches: true
