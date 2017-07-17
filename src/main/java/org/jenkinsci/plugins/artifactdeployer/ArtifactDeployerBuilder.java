@@ -54,8 +54,8 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
     ArtifactDeployerEntry entry;
 
     @DataBoundConstructor
-    public ArtifactDeployerBuilder(String includes, String basedir, String excludes, String remote, boolean flatten, boolean deleteRemote, boolean deleteRemoteArtifacts, DeleteRemoteArtifactsByScriptModel deleteRemoteArtifactsByScript, boolean failNoFilesDeploy) {
-        this.entry = new ArtifactDeployerEntry(includes, basedir, excludes, remote, flatten, deleteRemote, deleteRemoteArtifacts, deleteRemoteArtifactsByScript, failNoFilesDeploy);
+    public ArtifactDeployerBuilder(String includes, String basedir, String excludes, String remote, boolean flatten, boolean deleteRemote, boolean deleteRemoteArtifacts, boolean failNoFilesDeploy) {
+        this.entry = new ArtifactDeployerEntry(includes, basedir, excludes, remote, flatten, deleteRemote, deleteRemoteArtifacts, failNoFilesDeploy);
     }
 
     public ArtifactDeployerBuilder() {
@@ -198,18 +198,6 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
                                 }
                             }
 
-                        }
-
-                        //Execute the script for deletion
-                        if (entry.isDeleteRemoteArtifactsByScript()) {
-                            //Inject list artifacts as variable
-                            Binding binding = new Binding();
-                            if (artifactDeployerBuildAction != null) {
-                                List<ArtifactDeployerVO> listArtifacts = info.get(entry.getUniqueId());
-                                binding.setVariable("ARTIFACTS", listArtifacts);
-                            }
-                            GroovyShell shell = new GroovyShell(binding);
-                            shell.evaluate(entry.getGroovyExpression());
                         }
                     }
                 }

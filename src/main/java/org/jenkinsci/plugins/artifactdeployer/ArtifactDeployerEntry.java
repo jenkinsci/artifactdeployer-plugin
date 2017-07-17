@@ -46,7 +46,7 @@ public class ArtifactDeployerEntry implements Serializable {
     private boolean flatten;
     private boolean deleteRemote;
     private boolean deleteRemoteArtifacts;
-    private boolean deleteRemoteArtifactsByScript;
+    private boolean deleteRemoteArtifactsByScript=false;
     private String groovyExpression;
     private boolean failNoFilesDeploy;
 
@@ -54,7 +54,7 @@ public class ArtifactDeployerEntry implements Serializable {
     }
 
     @DataBoundConstructor
-    public ArtifactDeployerEntry(String includes, String basedir, String excludes, String remote, boolean flatten, boolean deleteRemote, boolean deleteRemoteArtifacts, DeleteRemoteArtifactsByScriptModel deleteRemoteArtifactsByScript, boolean failNoFilesDeploy) {
+    public ArtifactDeployerEntry(String includes, String basedir, String excludes, String remote, boolean flatten, boolean deleteRemote, boolean deleteRemoteArtifacts, boolean failNoFilesDeploy) {
         this.includes = includes;
         this.basedir = basedir;
         this.excludes = excludes;
@@ -62,14 +62,6 @@ public class ArtifactDeployerEntry implements Serializable {
         this.flatten = flatten;
         this.deleteRemote = deleteRemote;
         this.deleteRemoteArtifacts = deleteRemoteArtifacts;
-        //this.deleteRemoteArtifactsByScript = deleteRemoteArtifactsByScript;
-        //this.groovyExpression = groovyExpression;
-        if (deleteRemoteArtifactsByScript != null) {
-            this.deleteRemoteArtifactsByScript = true;
-            this.groovyExpression = deleteRemoteArtifactsByScript.getGroovyExpression();
-        } else {
-            this.deleteRemoteArtifactsByScript = false;
-        }
         this.failNoFilesDeploy = failNoFilesDeploy;
     }
 
@@ -115,14 +107,6 @@ public class ArtifactDeployerEntry implements Serializable {
     }
 
     @SuppressWarnings("unused")
-    public boolean isDeleteRemoteArtifactsByScript() {
-        return StringUtils.isNotBlank(groovyExpression);
-    }
-
-    @SuppressWarnings("unused")
-    public String getGroovyExpression() {
-        return groovyExpression;
-    }
 
     public boolean isFailNoFilesDeploy() {
         return failNoFilesDeploy;

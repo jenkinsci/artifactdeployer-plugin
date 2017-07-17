@@ -317,18 +317,6 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
                                 }
 
                             }
-
-                            //Execute the script for deletion
-                            if (entry.isDeleteRemoteArtifactsByScript()) {
-                                //Inject list artifacts as variable
-                                Binding binding = new Binding();
-                                if (artifactDeployerBuildAction != null) {
-                                    List<ArtifactDeployerVO> listArtifacts = info.get(entry.getUniqueId());
-                                    binding.setVariable("ARTIFACTS", listArtifacts);
-                                }
-                                GroovyShell shell = new GroovyShell(binding);
-                                shell.evaluate(entry.getGroovyExpression());
-                            }
                         }
                     }
                 }

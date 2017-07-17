@@ -60,22 +60,6 @@ THE SOFTWARE.
             <label class="attach-previous">Delete remote artifacts when the build is deleted</label>
         </f:entry>
 
-        <f:entry>
-            <table style="width:100%">
-                <f:optionalBlock
-                        field="deleteRemoteArtifactsByScript"
-                        name="artifactdeployer.entry.deleteRemoteArtifactsByScript"
-                        checked="${instance.entry.deleteRemoteArtifactsByScript}"
-                        title="${%Execute a groovy script when the job is deleted}">
-
-                    <f:entry field="groovyExpression" title="${%Groovy Expression}">
-                        <f:textarea name="artifactdeployer.entry.groovyExpression"
-                                    value="${instance.entry.groovyExpression}"/>
-                    </f:entry>
-                </f:optionalBlock>
-            </table>
-        </f:entry>
-
     </f:advanced>
 
 </j:jelly>
