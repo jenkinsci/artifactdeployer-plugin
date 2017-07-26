@@ -10,7 +10,7 @@
     <artifactId>artifactdeployer</artifactId>
     <packaging>hpi</packaging>
     <name>Jenkins Artifact Deployer Plug-in</name>
-    <version>0.40</version>
+    <version>1.00</version>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/ArtifactDeployer+Plugin</url>
 
     <licenses>
@@ -26,9 +26,16 @@
             <name>Gregory Boissinot</name>
             <timezone>+1</timezone>
             <roles>
-                <role>Project Owner</role>
+                <role>Former Project Owner</role>
                 <role>Project Lead Developer</role>
             </roles>
+        </developer>
+        <developer>
+          <id>seanturner83</id>
+          <name>Sean Turner</name>
+          <roles>
+            <role>Maintainer</role>
+          </roles>
         </developer>
     </developers>
 
@@ -84,4 +91,16 @@
             <url>http://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
+<build>
+    <plugins>
+      <plugin>
+        <groupId>org.jenkins-ci.tools</groupId>
+        <artifactId>maven-hpi-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <compatibleSinceVersion>1.0</compatibleSinceVersion>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

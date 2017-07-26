@@ -46,7 +46,7 @@ public class ArtifactDeployerEntry implements Serializable {
     private boolean flatten;
     private boolean deleteRemote;
     private boolean deleteRemoteArtifacts;
-    private boolean deleteRemoteArtifactsByScript=false;
+    private transient boolean deleteRemoteArtifactsByScript=false;
     private String groovyExpression;
     private boolean failNoFilesDeploy;
 
