@@ -70,7 +70,7 @@ public class ArtifactDeployerCopy implements FilePath.FileCallable<List<Artifact
         LocalCopy localCopy = new LocalCopy();
         List<File> outputFilesList = localCopy.copyAndGetNumbers(fileSet, flatten, new File(remote));
         if (inputFiles != outputFilesList.size()) {
-            listener.getLogger().println(String.format("[ArtifactDeployer] - All the files have not been deployed. There was %d input files but only %d was copied. Maybe you have to use 'Delete content of remote directory' feature for deleting remote directory before deploying.", inputFiles, outputFilesList.size()));
+            listener.getLogger().println(String.format("[ArtifactDeployer] - All the files have not been deployed. There were %d input files but only %d were copied. Maybe you need to use the 'Delete content of remote directory' feature for deleting the remote directory before deploying.", inputFiles, outputFilesList.size()));
         } else {
             listener.getLogger().println(String.format("[ArtifactDeployer] - %d file(s) have been copied from the '%s' to '%s'.", outputFilesList.size(), localBasedir.getPath(), outputFilePath));
         }

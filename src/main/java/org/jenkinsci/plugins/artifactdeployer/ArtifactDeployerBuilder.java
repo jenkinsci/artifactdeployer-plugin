@@ -179,21 +179,24 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
                         if (entry.isDeleteRemoteArtifacts()) {
                             List<ArtifactDeployerVO> listArtifacts = info.get(entry.getUniqueId());
                             if (listArtifacts != null) {
-                                for (ArtifactDeployerVO vo : listArtifacts) {
-                                    FilePath remoteArtifactPath = new FilePath(build.getWorkspace().getChannel(), vo.getRemotePath());
-                                    try {
-                                        if (remoteArtifactPath.exists()) {
-                                            remoteArtifactPath.deleteRecursive();
-                                        }
+                                FilePath workspace = build.getWorkspace();
+                                if (workspace != null) {
+                                    for (ArtifactDeployerVO vo : listArtifacts) {
+                                        FilePath remoteArtifactPath = new FilePath(workspace.getChannel(), vo.getRemotePath());
+                                        try {
+                                            if (remoteArtifactPath.exists()) {
+                                                remoteArtifactPath.deleteRecursive();
+                                            }
 
-                                        if (remoteArtifactPath.getParent().exists() && remoteArtifactPath.getParent().list().size() == 0) {
-                                            remoteArtifactPath.getParent().delete();
-                                        }
+                                            if (remoteArtifactPath.getParent().exists() && remoteArtifactPath.getParent().list().size() == 0) {
+                                                remoteArtifactPath.getParent().delete();
+                                            }
 
-                                    } catch (IOException ioe) {
-                                        logger.log(Level.SEVERE, "Error when deleting artifacts.", ioe);
-                                    } catch (InterruptedException ie) {
-                                        logger.log(Level.SEVERE, "Error when deleting artifacts.", ie);
+                                        } catch (IOException ioe) {
+                                            logger.log(Level.SEVERE, "Error when deleting artifacts.", ioe);
+                                        } catch (InterruptedException ie) {
+                                            logger.log(Level.SEVERE, "Error when deleting artifacts.", ie);
+                                        }
                                     }
                                 }
                             }

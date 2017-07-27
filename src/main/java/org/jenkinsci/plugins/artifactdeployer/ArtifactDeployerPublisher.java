@@ -104,15 +104,17 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
 
     private boolean isPerformDeployment(AbstractBuild build) {
         Result result = build.getResult();
-        if (result == null) {
-            return true;
-        }
 
         if (deployEvenBuildFail) {
             return true;
         }
 
-        return build.getResult().isBetterOrEqualTo(Result.UNSTABLE);
+        if (result == null) {
+            return true;
+        }
+        else {
+            return result.isBetterOrEqualTo(Result.UNSTABLE);
+        }
     }
 
     private boolean _perform(hudson.model.AbstractBuild<?, ?> build, hudson.Launcher launcher, hudson.model.BuildListener listener) throws java.lang.InterruptedException, java.io.IOException {
@@ -292,26 +294,29 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
                                 List<ArtifactDeployerVO> listArtifacts = info.get(entry.getUniqueId());
                                 if (listArtifacts != null) {
                                     for (ArtifactDeployerVO vo : listArtifacts) {
-                                        FilePath remoteArtifactPath = new FilePath(build.getWorkspace().getChannel(), vo.getRemotePath());
-                                        try {
-                                            if (remoteArtifactPath.exists()) {
-                                                remoteArtifactPath.deleteRecursive();
-                                            }
-
-                                            FilePath parent = remoteArtifactPath.getParent();
-                                            boolean rest;
-                                            do {
-                                                rest = parent.exists() && parent.list().size() == 0;
-                                                if (rest) {
-                                                    parent.delete();
+                                        FilePath workspace = build.getWorkspace();
+                                        if (workspace != null){
+                                            FilePath remoteArtifactPath = new FilePath(workspace.getChannel(), vo.getRemotePath());
+                                            try {
+                                                if (remoteArtifactPath != null && remoteArtifactPath.exists()) {
+                                                    remoteArtifactPath.deleteRecursive();
                                                 }
-                                                parent = parent.getParent();
-                                            } while (rest);
 
-                                        } catch (IOException ioe) {
-                                            logger.log(Level.SEVERE, "Error when deleting artifacts.", ioe);
-                                        } catch (InterruptedException ie) {
-                                            logger.log(Level.SEVERE, "Error when deleting artifacts.", ie);
+                                                FilePath parent = remoteArtifactPath.getParent();
+                                                boolean rest;
+                                                do {
+                                                    rest = parent.exists() && parent.list().size() == 0;
+                                                    if (rest) {
+                                                        parent.delete();
+                                                    }
+                                                    parent = parent.getParent();
+                                                } while (rest);
+
+                                            } catch (IOException ioe) {
+                                                logger.log(Level.SEVERE, "Error when deleting artifacts.", ioe);
+                                            } catch (InterruptedException ie) {
+                                                logger.log(Level.SEVERE, "Error when deleting artifacts.", ie);
+                                            }
                                         }
                                     }
                                 }

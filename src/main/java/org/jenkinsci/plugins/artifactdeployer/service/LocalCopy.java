@@ -42,7 +42,7 @@ public class LocalCopy {
 
             private final List<File> deployedFiles = new ArrayList<File>();
 
-            private int copySize;
+            //private int copySize;
 
             public CopyImpl() {
                 setProject(new org.apache.tools.ant.Project());
@@ -50,7 +50,7 @@ public class LocalCopy {
 
             @Override
             protected void doFileOperations() {
-                copySize = super.fileCopyMap.size();
+                //copySize = super.fileCopyMap.size();
                 for (Object tabOb : super.fileCopyMap.values()) {
                     String[] tab = (String[]) tabOb;
                     for (String f : tab) {
@@ -60,9 +60,9 @@ public class LocalCopy {
                 super.doFileOperations();
             }
 
-            public int getNumCopied() {
-                return copySize;
-            }
+            //public int getNumCopied() {
+            //    return copySize;
+            //}
 
             public List<File> getDeployedFiles() {
                 return deployedFiles;

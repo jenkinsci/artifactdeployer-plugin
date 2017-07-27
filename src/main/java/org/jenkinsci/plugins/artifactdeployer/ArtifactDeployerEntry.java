@@ -32,6 +32,8 @@ import java.io.Serializable;
  */
 public class ArtifactDeployerEntry implements Serializable {
 
+    static final long serialVersionUID = 1L;
+
     @Deprecated
     @SuppressWarnings("unused")
     private transient String id;
