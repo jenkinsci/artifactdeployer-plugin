@@ -42,6 +42,8 @@
 
     <properties>
         <jenkins.version>2.346.1</jenkins.version>
+        <!-- Requires triage -->
+        <spotbugs.threshold>High</spotbugs.threshold>
     </properties>
 
     <scm>
