@@ -29,7 +29,7 @@ THE SOFTWARE.
         </j:if>
         <l:main-panel>
             <h1>
-                <img src="${imagesURL}/48x48/package.gif" alt="" height="48" width="48"/>
+                <l:icon class="icon-package icon-xlg" />
                 ${%Deployed Artifacts}
                 <j:if test="${it.owner != null}">
                     #${it.owner.number}
@@ -40,7 +40,7 @@ THE SOFTWARE.
                 <j:forEach var="artifact" items="${latestDeployedArtifacts}">
                     <tr>
                         <td>
-                            <img src="${imagesURL}/16x16/text.png" alt="" height="16" width="16"/>
+                            <l:icon class="icon-document icon-sm"/>
                         </td>
                         <td>
                             ${h.escape(artifact.remotePath)}

@@ -4,19 +4,20 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>2.30</version>
+        <version>4.46</version>
+        <relativePath />
     </parent>
 
     <artifactId>artifactdeployer</artifactId>
     <packaging>hpi</packaging>
-    <name>Jenkins Artifact Deployer Plug-in</name>
+    <name>Jenkins Artifact Deployer Plugin</name>
     <version>1.3-SNAPSHOT</version>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/ArtifactDeployer+Plugin</url>
 
     <licenses>
         <license>
-            <name>MIT license</name>
-            <comments>All source code is under the MIT license.</comments>
+            <name>The MIT license</name>
+            <url>https://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
 
@@ -40,24 +41,34 @@
     </developers>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <maven-release-plugin.version>2.5</maven-release-plugin.version>
+        <jenkins.version>2.346.1</jenkins.version>
+        <!-- Requires triage -->
+        <spotbugs.threshold>High</spotbugs.threshold>
     </properties>
 
     <scm>
-	    <connection>scm:git:ssh://github.com/jenkinsci/artifactdeployer-plugin.git</connection>
+	    <connection>scm:git:https://github.com/jenkinsci/artifactdeployer-plugin.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/jenkinsci/artifactdeployer-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/artifactdeployer-plugin</url>
-        <tag>artifactdeployer-1.0</tag>
+        <tag>HEAD</tag>
     </scm>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.jenkins.tools.bom</groupId>
+                <artifactId>bom-2.346.x</artifactId>
+                <version>1607.va_c1576527071</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>matrix-project</artifactId>
-            <version>1.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.jnr</groupId>
@@ -78,16 +89,5 @@
             <url>https://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
-<build>
-    <plugins>
-      <plugin>
-        <groupId>org.jenkins-ci.tools</groupId>
-        <artifactId>maven-hpi-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <compatibleSinceVersion>1.0</compatibleSinceVersion>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+
 </project>
