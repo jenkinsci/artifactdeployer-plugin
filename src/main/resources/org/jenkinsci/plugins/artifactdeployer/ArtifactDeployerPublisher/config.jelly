@@ -51,26 +51,22 @@ THE SOFTWARE.
                     </f:entry>
 
                     <f:entry field="flatten">
-                        <f:checkbox name="artifactdeployer.entry.flatten" checked="${deployedArtifact.flatten}"/>
-                        <label class="attach-previous">Flatten</label>
+                        <f:checkbox name="artifactdeployer.entry.flatten" checked="${deployedArtifact.flatten}" title="Flatten"/>
                     </f:entry>
 
                     <f:entry field="failNoFilesDeploy">
                         <f:checkbox name="artifactdeployer.entry.failNoFilesDeploy"
-                                    checked="${deployedArtifact.failNoFilesDeploy}"/>
-                        <label class="attach-previous">Fail build if there are no files to deploy</label>
+                                    checked="${deployedArtifact.failNoFilesDeploy}" title="Fail build if there are no files to deploy"/>
                     </f:entry>
 
                     <f:entry field="deleteRemote">
                         <f:checkbox name="artifactdeployer.entry.deleteRemote"
-                                    checked="${deployedArtifact.deleteRemote}"/>
-                        <label class="attach-previous">Clean-up remote directory before deployment</label>
+                                    checked="${deployedArtifact.deleteRemote}" title="Clean-up remote directory before deployment"/>
                     </f:entry>
 
                     <f:entry field="deleteRemoteArtifacts">
                         <f:checkbox name="artifactdeployer.entry.deleteRemoteArtifacts"
-                                    checked="${deployedArtifact.deleteRemoteArtifacts}"/>
-                        <label class="attach-previous">Delete remote artifacts when the build is deleted</label>
+                                    checked="${deployedArtifact.deleteRemoteArtifacts}" title="Delete remote artifacts when the build is deleted"/>
                     </f:entry>
                     
                 </f:advanced>
@@ -88,8 +84,7 @@ THE SOFTWARE.
     </f:entry>
 
     <f:entry field="deployEvenBuildFail">
-        <f:checkbox name="instance.deployEvenBuildFail" checked="${instance.deployEvenBuildFail}"/>
-        <label class="attach-previous">${%Deploy even if the build is failed}</label>
+        <f:checkbox name="instance.deployEvenBuildFail" checked="${instance.deployEvenBuildFail}" title="${%Deploy even if the build is failed}"/>
     </f:entry>
 
 </j:jelly>
