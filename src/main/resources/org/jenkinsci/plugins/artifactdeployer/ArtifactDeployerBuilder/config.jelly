@@ -45,8 +45,7 @@ THE SOFTWARE.
         </f:entry>
 
         <f:entry field="flatten">
-            <f:checkbox name="artifactdeployer.entry.flatten" checked="${instance.entry.flatten}"/>
-            <label class="attach-previous">Flatten</label>
+            <f:checkbox name="artifactdeployer.entry.flatten" checked="${instance.entry.flatten}" title="Flatten"/>
         </f:entry>
 
         <f:entry field="failNoFilesDeploy">
