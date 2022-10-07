@@ -108,7 +108,7 @@ Deploy artifacts for failed builds, too
 ## Release 0.13
 
 * Fix [JENKINS-11640](https://issues.jenkins.io/browse/JENKINS-11640) -
-Can't copy on remote windows slave
+Can't copy on remote windows agent
 
 ## Release 0.12
 
@@ -138,7 +138,7 @@ Added support of Maven project
 
 ## Release 0.8
 
-* Fix slave execution
+* Fix agent execution
 
 ## Release 0.7
 

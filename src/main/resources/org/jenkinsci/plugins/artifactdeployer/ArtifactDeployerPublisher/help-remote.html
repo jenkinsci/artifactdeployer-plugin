@@ -1,10 +1,10 @@
 <div>
     <p>
         Artifacts will be deployed in the specified output directory.<br/>
-        The remote location must be accessible through the build machine (master/slave node).<br/>
+        The remote location must be accessible through the build machines (the controller and the agents).<br/>
         If you want to have the ability to download deployed artifacts through the Jenkins dashboard,
-        the location must be accessible from the Jenkins master. <br/>
+        the location must be accessible from the Jenkins controller. <br/>
         Make sure the Jenkins process have the right permissions to write to the remote location.<br/>
-        For example with a shared NFS storage, '/nfs/build/deploy/${BUILD_ID}' can be a valid value on an Unix machine.
+        For example with a shared NFS storage, '/nfs/build/deploy/${BUILD_ID}' can be a valid value on a Unix machine.
     </p>
 </div>
