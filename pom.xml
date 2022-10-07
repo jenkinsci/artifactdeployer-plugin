@@ -12,7 +12,7 @@
     <packaging>hpi</packaging>
     <name>Jenkins Artifact Deployer Plugin</name>
     <version>1.3-SNAPSHOT</version>
-    <url>http://wiki.jenkins-ci.org/display/JENKINS/ArtifactDeployer+Plugin</url>
+    <url>https://github.com/jenkinsci/artifactdeployer-plugin</url>
 
     <licenses>
         <license>
