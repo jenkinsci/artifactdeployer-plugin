@@ -76,7 +76,7 @@
         <dependency>
             <groupId>com.github.jnr</groupId>
             <artifactId>jnr-posix</artifactId>
-            <version>3.0.45</version>
+            <version>3.1.15</version>
         </dependency>
     </dependencies>
 
