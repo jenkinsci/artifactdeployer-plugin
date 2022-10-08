@@ -4,15 +4,15 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.46</version>
+        <version>4.48</version>
         <relativePath />
     </parent>
 
     <artifactId>artifactdeployer</artifactId>
     <packaging>hpi</packaging>
     <name>Jenkins Artifact Deployer Plugin</name>
-    <version>1.3-SNAPSHOT</version>
-    <url>http://wiki.jenkins-ci.org/display/JENKINS/ArtifactDeployer+Plugin</url>
+    <version>${revision}${changelist}</version>
+    <url>https://github.com/jenkinsci/artifactdeployer-plugin</url>
 
     <licenses>
         <license>
@@ -41,16 +41,19 @@
     </developers>
 
     <properties>
+        <revision>1.3</revision>
+        <changelist>-SNAPSHOT</changelist>
+        <gitHubRepo>jenkinsci/artifactdeployer-plugin</gitHubRepo>
         <jenkins.version>2.346.1</jenkins.version>
         <!-- Requires triage -->
         <spotbugs.threshold>High</spotbugs.threshold>
     </properties>
 
     <scm>
-	    <connection>scm:git:https://github.com/jenkinsci/artifactdeployer-plugin.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/artifactdeployer-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/artifactdeployer-plugin</url>
-        <tag>HEAD</tag>
+	    <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/${gitHubRepo}.git</developerConnection>
+        <url>https://github.com/${gitHubRepo}</url>
+        <tag>${scmTag}</tag>
     </scm>
 
     <dependencyManagement>
