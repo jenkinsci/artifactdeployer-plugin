@@ -1,5 +1,13 @@
 # Changelog
 
+## Release 1.3
+
+* Migrate documentation to GitHub
+* Enable incremental deployments
+* Manage dependencies with dependabot
+* Enable development with Gitpod
+* Update for latest icon improvements
+
 ## Release 1.2
 
 * Fix SECURITY-294 - Rips out the ability to execute a Groovy script
