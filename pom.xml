@@ -44,7 +44,7 @@
         <revision>1.4</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/artifactdeployer-plugin</gitHubRepo>
-        <jenkins.version>2.346.1</jenkins.version>
+        <jenkins.version>2.346.3</jenkins.version>
         <!-- Requires triage -->
         <spotbugs.threshold>High</spotbugs.threshold>
     </properties>
