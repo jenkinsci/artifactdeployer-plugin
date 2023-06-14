@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.49</version>
+        <version>4.65</version>
         <relativePath />
     </parent>
 
@@ -44,7 +44,7 @@
         <revision>1.4</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/artifactdeployer-plugin</gitHubRepo>
-        <jenkins.version>2.346.3</jenkins.version>
+        <jenkins.version>2.361.4</jenkins.version>
         <!-- Requires triage -->
         <spotbugs.threshold>High</spotbugs.threshold>
     </properties>
@@ -60,8 +60,8 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.346.x</artifactId>
-                <version>1670.v7f165fc7a_079</version>
+                <artifactId>bom-2.361.x</artifactId>
+                <version>2102.v854b_fec19c92</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
