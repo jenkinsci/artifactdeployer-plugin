@@ -4,5 +4,7 @@ version: 2
 updates:
   - package-ecosystem: "maven"
     directory: "/"
+    labels:
+      - "dependencies"
     schedule:
       interval: "monthly"
