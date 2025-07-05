@@ -23,10 +23,10 @@
 package org.jenkinsci.plugins.artifactdeployer;
 
 import hudson.model.AbstractBuild;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -76,7 +76,7 @@ public class DeployedArtifactsResult {
     }
 
     @SuppressWarnings("unused")
-    public void doDownload(final StaplerRequest request, final StaplerResponse response) throws IOException, ServletException {
+    public void doDownload(final StaplerRequest2 request, final StaplerResponse2 response) throws IOException, ServletException {
 
         String restOfPath = request.getRestOfPath();
         if (restOfPath == null) {
