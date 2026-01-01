@@ -48,6 +48,12 @@ THE SOFTWARE.
             <f:checkbox name="artifactdeployer.entry.flatten" checked="${instance.entry.flatten}" title="Flatten"/>
         </f:entry>
 
+        <f:entry field="failNoFilesDeploy">
+            <f:checkbox name="artifactdeployer.entry.failNoFilesDeploy"
+                        checked="${instance.entry.failNoFilesDeploy}"/>
+            <label class="attach-previous">Fail build if there are no files to deploy</label>
+        </f:entry>
+
         <f:entry field="deleteRemote">
             <f:checkbox name="artifactdeployer.entry.deleteRemote" checked="${instance.entry.deleteRemote}"/>
             <label class="attach-previous">Clean-up remote directory before deployment</label>

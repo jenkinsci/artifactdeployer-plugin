@@ -126,8 +126,37 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
         ArtifactDeployerManager deployerManager = new ArtifactDeployerManager();
         FilePath basedirFilePath = deployerManager.getBasedirFilePath(workspace, basedir);
         List<ArtifactDeployerVO> results = basedirFilePath.act(deployerCopy);
+
+        if (isFailNoFilesDeploy(results, entry)) {
+            throw new ArtifactDeployerException("Can't find any artifacts to deploy with the following configuration :"
+                    + printConfiguration(includes, excludes, basedirFilePath.getRemote(), outputPath));
+        }
+
         deployedArtifacts.put(entry.getUniqueId(), results);
         return deployedArtifacts;
+    }
+
+    private boolean isFailNoFilesDeploy(List<ArtifactDeployerVO> results, ArtifactDeployerEntry entry) {
+        return ((results == null || results.size() == 0) && entry.isFailNoFilesDeploy());
+    }
+
+    private String printConfiguration(String includes, String excludes, String basedir, String outputPath) {
+        StringBuffer sb = new StringBuffer();
+
+        if (includes != null) {
+            sb.append(",includes:").append(includes);
+        }
+        if (excludes != null) {
+            sb.append(",excludes:").append(excludes);
+        }
+
+        sb.append(",basedir:").append(basedir);
+        sb.append(",outPath:").append(outputPath);
+        sb.append("]");
+
+        sb = sb.replace(0, 1, "[");
+
+        return sb.toString();
     }
 
     @SuppressWarnings("unused")
