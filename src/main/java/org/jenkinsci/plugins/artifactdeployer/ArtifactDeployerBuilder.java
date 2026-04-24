@@ -136,11 +136,11 @@ public class ArtifactDeployerBuilder extends Builder implements Serializable {
         return deployedArtifacts;
     }
 
-    private boolean isFailNoFilesDeploy(List<ArtifactDeployerVO> results, ArtifactDeployerEntry entry) {
-        return ((results == null || results.size() == 0) && entry.isFailNoFilesDeploy());
+    boolean isFailNoFilesDeploy(List<ArtifactDeployerVO> results, ArtifactDeployerEntry entry) {
+        return ((results == null || results.isEmpty()) && entry.isFailNoFilesDeploy());
     }
 
-    private String printConfiguration(String includes, String excludes, String basedir, String outputPath) {
+    String printConfiguration(String includes, String excludes, String basedir, String outputPath) {
         StringBuffer sb = new StringBuffer();
 
         if (includes != null) {
