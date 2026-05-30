@@ -41,6 +41,20 @@ deployment mechanism.
 -   Jenkins process must have the right permissions to write in the
     specified location
 
+# Running the Tests
+
+Run the full test suite with Maven:
+
+```bash
+mvn test
+```
+
+To run only the unit tests for a specific class:
+
+```bash
+mvn test -Dtest=ArtifactDeployerBuilderTest
+```
+
 # Changelog
 
 See the separate [change log](CHANGELOG.md) for past releases.
