@@ -25,7 +25,6 @@
         <revision>1.4</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/artifactdeployer-plugin</gitHubRepo>
-        <hpi.bundledArtifacts>ant,ant-filesystem-tasks,ant-launcher,jna,jna-posix</hpi.bundledArtifacts>
         <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
         <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
         <jenkins.baseline>2.479</jenkins.baseline>
@@ -57,11 +56,6 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>matrix-project</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.jnr</groupId>
-            <artifactId>jnr-posix</artifactId>
-            <version>3.1.15</version>
         </dependency>
     </dependencies>
 

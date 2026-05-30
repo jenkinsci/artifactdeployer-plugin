@@ -2,6 +2,9 @@ package org.jenkinsci.plugins.artifactdeployer.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.LinkOption;
 import java.util.Enumeration;
 
 import org.apache.tools.ant.BuildException;
@@ -73,8 +76,8 @@ public class CopyWithPerms extends Copy
                                 /*, getForce()*/); //ant 1.8.2
 
                         if (preservePermissions) {
-                            int perms = PermissionsUtils.getPermissions(new File(fromFile));
-                            PermissionsUtils.setPermissions(new File(toFile), perms);
+                            var perms = Files.getPosixFilePermissions(Path.of(fromFile), LinkOption.NOFOLLOW_LINKS);
+                            Files.setPosixFilePermissions(Path.of(toFile), perms);
                         }
 
                     } catch (IOException ioe) {
