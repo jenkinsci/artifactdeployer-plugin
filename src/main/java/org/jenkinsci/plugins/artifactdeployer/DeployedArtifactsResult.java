@@ -26,6 +26,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.Item;
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
+import org.kohsuke.stapler.verb.POST;
 
 import jakarta.servlet.ServletException;
 import java.io.File;
@@ -77,6 +78,7 @@ public class DeployedArtifactsResult {
     }
 
     @SuppressWarnings("unused")
+    @POST
     public void doDownload(final StaplerRequest2 request, final StaplerResponse2 response) throws IOException, ServletException {
         getOwner().checkPermission(Item.READ);
 

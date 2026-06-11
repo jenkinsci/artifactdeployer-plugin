@@ -364,7 +364,10 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
         }
 
         @POST
-        public FormValidation doCheckRemote(@QueryParameter String value) throws IOException {
+        public FormValidation doCheckRemote(@AncestorInPath AbstractProject project, @QueryParameter String value) throws IOException {
+            if (project != null) {
+                project.checkPermission(Item.CONFIGURE);
+            }
             if (value == null || value.trim().length() == 0) {
                 return FormValidation.error("Remote directory is mandatory.");
             }
