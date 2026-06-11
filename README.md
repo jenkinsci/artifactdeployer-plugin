@@ -1,3 +1,10 @@
+[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/artifactdeployer.svg)](https://plugins.jenkins.io/artifactdeployer)
+[![GitHub release](https://img.shields.io/github/release/jenkinsci/artifactdeployer-plugin.svg?label=release)](https://github.com/jenkinsci/artifactdeployer-plugin/releases/latest)
+[![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/artifactdeployer.svg?color=blue)](https://plugins.jenkins.io/artifactdeployer)
+[![Build Status](https://ci.jenkins.io/buildStatus/icon?job=Plugins%2Fartifactdeployer-plugin%2Fmaster)](https://ci.jenkins.io/job/Plugins/job/artifactdeployer-plugin/job/master/)
+[![GitHub license](https://img.shields.io/github/license/jenkinsci/artifactdeployer-plugin.svg)](https://github.com/jenkinsci/artifactdeployer-plugin/blob/master/LICENSE.txt)
+[![Maintenance](https://img.shields.io/maintenance/yes/2026.svg)](https://github.com/jenkinsci/artifactdeployer-plugin)
+
 # Artifact Deployer Plugin
 
 This plugin makes it possible to copy artifacts to remote locations.
@@ -25,6 +32,14 @@ But none of these plugins provides a common way to manage the deployment.
 ArtifactDeployer is a complete alternative to the built-in Jenkins
 feature "Archiving artifacts' and it is aimed at providing an uniform
 deployment mechanism.
+
+# Maintainer status
+
+This plugin is currently maintained by a single active maintainer.
+At this time, we are not looking to transfer ownership or plugin adoption.
+
+Co-contributors are very welcome. If you want to help with fixes, tests,
+documentation, or maintenance, please open a PR or start a discussion.
 
 # Features
 
@@ -58,3 +73,5 @@ mvn test -Dtest=ArtifactDeployerBuilderTest
 # Changelog
 
 See the separate [change log](CHANGELOG.md) for past releases.
+
+Made with ❤️ for and by the Jenkins community.
