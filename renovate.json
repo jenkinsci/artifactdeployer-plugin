@@ -1,47 +1,14 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    ":dependencyDashboard",
-    ":semanticCommitsDisabled",
-    ":timezone(Europe/Berlin)",
-    "schedule:weekly"
-  ],
-  "labels": [
-    "dependencies"
+    "github>jenkinsci/renovate-config"
   ],
   "packageRules": [
     {
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "digest"
-      ],
-      "automerge": false,
-      "addLabels": [
-        "dependencies-safe-to-merge"
-      ]
-    },
-    {
-      "matchManagers": [
-        "github-actions"
-      ],
-      "automerge": false,
-      "addLabels": [
-        "dependencies-safe-to-merge"
-      ]
-    },
-    {
       "matchPackageNames": [
-        "org.jenkins-ci.plugins:plugin"
+        "org.json:json"
       ],
-      "enabled": false
-    },
-    {
-      "matchPackageNames": [
-        "io.jenkins.tools.bom:bom-*"
-      ],
-      "enabled": false
+      "maxMajorIncrement": 0
     }
   ]
 }
