@@ -39,6 +39,13 @@ class ArtifactDeployerBuildActionTest {
     }
 
     @Test
+    void getDeployedArtifactsCount_withEmptyMap_shouldReturnZero() {
+        ArtifactDeployerBuildAction action = new ArtifactDeployerBuildAction();
+        action.setArtifactsInfo(null, new java.util.HashMap<>());
+        assertEquals(0, action.getDeployedArtifactsCount());
+    }
+
+    @Test
     void getTarget_shouldCreateDeployedArtifactsResult() {
         ArtifactDeployerBuildAction action = new ArtifactDeployerBuildAction();
         Object target = action.getTarget();
