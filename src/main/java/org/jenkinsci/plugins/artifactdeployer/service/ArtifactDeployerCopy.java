@@ -26,6 +26,7 @@ import hudson.FilePath;
 import hudson.Util;
 import hudson.model.BuildListener;
 import hudson.remoting.VirtualChannel;
+import jenkins.security.Roles;
 import org.apache.tools.ant.types.FileSet;
 import org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerVO;
 import org.jenkinsci.remoting.RoleChecker;
@@ -88,7 +89,7 @@ public class ArtifactDeployerCopy implements FilePath.FileCallable<List<Artifact
     }
     @Override
         public void checkRoles(RoleChecker roleChecker) throws SecurityException {
-            //We don't require any roles to be checked?
+            roleChecker.check(this, Roles.SLAVE);
         }
 
 }

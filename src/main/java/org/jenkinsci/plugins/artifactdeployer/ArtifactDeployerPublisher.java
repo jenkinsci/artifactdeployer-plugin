@@ -42,6 +42,7 @@ import org.jenkinsci.plugins.artifactdeployer.service.DeployedArtifactsActionMan
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -347,17 +348,22 @@ public class ArtifactDeployerPublisher extends Recorder implements MatrixAggrega
             return DISPLAY_NAME;
         }
 
+        @POST
         public FormValidation doCheckIncludes(@AncestorInPath AbstractProject project, @QueryParameter String value) throws IOException {
+            project.checkPermission(Item.CONFIGURE);
             return FilePath.validateFileMask(project.getSomeWorkspace(), value);
         }
 
+        @POST
         public FormValidation doCheckExcludes(@AncestorInPath AbstractProject project, @QueryParameter String value) throws IOException {
+            project.checkPermission(Item.CONFIGURE);
             if (value == null || value.trim().length() == 0) {
                 return FormValidation.ok();
             }
             return FilePath.validateFileMask(project.getSomeWorkspace(), value);
         }
 
+        @POST
         public FormValidation doCheckRemote(@QueryParameter String value) throws IOException {
             if (value == null || value.trim().length() == 0) {
                 return FormValidation.error("Remote directory is mandatory.");
