@@ -53,4 +53,20 @@ class LocalCopyTest {
 
         assertEquals("Error on copying file.", exception.getMessage());
     }
+
+    @Test
+    void copyAndGetNumbers_withFlatten_shouldCopyFilesIntoTargetFlatly() throws Exception {
+        Path sourceDir = Files.createDirectories(tempDir.resolve("src3"));
+        Path subDir = Files.createDirectories(sourceDir.resolve("sub"));
+        Path targetDir = Files.createDirectories(tempDir.resolve("target3"));
+        Files.writeString(subDir.resolve("nested.txt"), "nested content");
+
+        FileSet fileSet = Util.createFileSet(sourceDir.toFile(), "**/*.txt", null);
+        LocalCopy localCopy = new LocalCopy();
+        List<File> copied = localCopy.copyAndGetNumbers(fileSet, true, targetDir.toFile());
+
+        assertEquals(1, copied.size());
+        assertTrue(Files.exists(targetDir.resolve("nested.txt")));
+        assertEquals("nested.txt", copied.get(0).getName());
+    }
 }
