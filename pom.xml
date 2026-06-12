@@ -25,7 +25,6 @@
         <revision>1.4</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/artifactdeployer-plugin</gitHubRepo>
-        <hpi.bundledArtifacts>ant,ant-filesystem-tasks,ant-launcher,jna,jna-posix</hpi.bundledArtifacts>
         <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
         <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
         <jenkins.baseline>2.479</jenkins.baseline>
@@ -59,21 +58,12 @@
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>matrix-project</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.atlassian</groupId>
-            <artifactId>ant-filesystem-tasks</artifactId>
-            <version>0.0.5</version>
-        </dependency>
     </dependencies>
 
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
             <url>https://repo.jenkins-ci.org/public/</url>
-        </repository>
-        <repository>
-            <id>atlassian-public</id>
-            <url>https://maven.atlassian.com/repository/public</url>
         </repository>
     </repositories>
     <pluginRepositories>

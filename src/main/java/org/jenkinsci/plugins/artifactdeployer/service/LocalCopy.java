@@ -22,7 +22,6 @@
  */
 package org.jenkinsci.plugins.artifactdeployer.service;
 
-import com.atlassian.ant.tasks.CopyWithPerms;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
 import org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerException;
